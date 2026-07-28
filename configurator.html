@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurator Echipamente Industriale v1.0.4</title>
+    <title>Configurator Echipamente Industriale v1.0.5</title>
     <!-- Tailwind CSS CDN for a modern, responsive interface -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -19,89 +19,89 @@
 <body class="min-h-screen text-slate-800 antialiased">
 
     <!-- Top Navigation Bar -->
-    <header class="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white/95 px-6 shadow-sm backdrop-blur">
+    <header class="sticky top-0 z-30 flex h-14 w-full items-center justify-between border-b border-slate-200 bg-white/95 px-6 shadow-sm backdrop-blur">
         <div class="flex items-center space-x-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-200">
-                <i class="fa-solid fa-microchip text-lg"></i>
+            <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-100">
+                <i class="fa-solid fa-microchip text-base"></i>
             </div>
             <div>
                 <div class="flex items-center space-x-2">
-                    <h1 class="text-lg font-bold tracking-tight text-slate-900">Configurator Echipamente</h1>
-                    <span class="inline-flex items-center rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-700/10">v1.0.4</span>
+                    <h1 class="text-sm font-bold tracking-tight text-slate-900">Configurator Echipamente</h1>
+                    <span class="inline-flex items-center rounded-md bg-indigo-50 px-2 py-0.5 text-[10px] font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-700/10">v1.0.5</span>
                 </div>
-                <p class="text-xs font-medium text-slate-500">Gestiune & Identificare Datalogic & Thor</p>
+                <p class="text-[10px] font-medium text-slate-400">Gestiune & Identificare Datalogic & Thor</p>
             </div>
         </div>
         <div class="flex items-center space-x-4">
             <!-- Save/Download Button -->
-            <button onclick="downloadUpdatedHTML()" class="inline-flex items-center space-x-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-100 transition hover:bg-indigo-700 hover:shadow-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            <button onclick="downloadUpdatedHTML()" class="inline-flex items-center space-x-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                 <i class="fa-solid fa-floppy-disk"></i>
-                <span>Salvează Config în HTML</span>
+                <span>Salvează Config</span>
             </button>
         </div>
     </header>
 
-    <main class="mx-auto max-w-7xl p-6 lg:p-8">
+    <main class="mx-auto max-w-7xl p-4 lg:p-6">
 
         <!-- Quick stats cards -->
-        <div class="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
-            <div class="flex items-center space-x-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                    <i class="fa-solid fa-list-ol text-xl"></i>
+        <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div class="flex items-center space-x-3 rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm">
+                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                    <i class="fa-solid fa-list-ol text-base"></i>
                 </div>
                 <div>
-                    <p class="text-sm font-medium text-slate-500">Total Înregistrări</p>
-                    <p id="stat-total-records" class="text-2xl font-bold text-slate-900">0</p>
+                    <p class="text-[11px] font-medium text-slate-400">Total Înregistrări</p>
+                    <p id="stat-total-records" class="text-lg font-bold text-slate-900">0</p>
                 </div>
             </div>
-            <div class="flex items-center space-x-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-                    <i class="fa-solid fa-barcode text-xl"></i>
+            <div class="flex items-center space-x-3 rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm">
+                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+                    <i class="fa-solid fa-barcode text-base"></i>
                 </div>
                 <div>
-                    <p class="text-sm font-medium text-slate-500">Scannere Matrix active</p>
-                    <p id="stat-matrix-scanners" class="text-2xl font-bold text-slate-900">0</p>
+                    <p class="text-[11px] font-medium text-slate-400">Scannere Matrix active</p>
+                    <p id="stat-matrix-scanners" class="text-lg font-bold text-slate-900">0</p>
                 </div>
             </div>
-            <div class="flex items-center space-x-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-                    <i class="fa-solid fa-location-dot text-xl"></i>
+            <div class="flex items-center space-x-3 rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm">
+                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                    <i class="fa-solid fa-location-dot text-base"></i>
                 </div>
                 <div>
-                    <p class="text-sm font-medium text-slate-500">Locații Utilizate</p>
-                    <p id="stat-unique-locations" class="text-2xl font-bold text-slate-900">0</p>
+                    <p class="text-[11px] font-medium text-slate-400">Locații Utilizate</p>
+                    <p id="stat-unique-locations" class="text-lg font-bold text-slate-900">0</p>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
 
             <!-- Left Side: Add/Edit Form -->
             <div class="lg:col-span-1">
-                <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
-                    <div class="mb-6 flex items-center justify-between border-b border-slate-100 pb-4">
-                        <h2 id="form-title" class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <div class="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm">
+                    <div class="mb-4 flex items-center justify-between border-b border-slate-100 pb-3">
+                        <h2 id="form-title" class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
                             <i class="fa-solid fa-circle-plus text-indigo-600"></i>
                             <span>Adaugă Echipament Nou</span>
                         </h2>
-                        <button id="btn-cancel-edit" onclick="resetForm()" class="hidden text-xs font-semibold text-rose-500 hover:text-rose-600 transition">
-                            Anulează editarea
+                        <button id="btn-cancel-edit" onclick="resetForm()" class="hidden text-[11px] font-semibold text-rose-500 hover:text-rose-600 transition">
+                            Anulează
                         </button>
                     </div>
 
-                    <form id="equipment-form" onsubmit="handleFormSubmit(event)" class="space-y-5">
+                    <form id="equipment-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
                         <input type="hidden" id="edit-id" value="">
 
                         <!-- Nr Curent (Disabled/Readonly in Form as it is auto-calculated but displayed) -->
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Număr Curent</label>
-                            <input type="text" id="record-idx" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-500 focus:outline-none" value="Auto-generat" readonly>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Număr Curent</label>
+                            <input type="text" id="record-idx" class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-500 focus:outline-none" value="Auto-generat" readonly>
                         </div>
 
                         <!-- Tip Echipament -->
                         <div>
-                            <label for="equipment-type" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Tip Echipament <span class="text-rose-500">*</span></label>
-                            <select id="equipment-type" onchange="onEquipmentTypeChange()" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100" required>
+                            <label for="equipment-type" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Tip Echipament <span class="text-rose-500">*</span></label>
+                            <select id="equipment-type" onchange="onEquipmentTypeChange()" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100" required>
                                 <option value="" disabled selected>Selectează tipul...</option>
                                 <option value="Blade">Blade</option>
                                 <option value="Matrix 120">Matrix 120</option>
@@ -116,40 +116,39 @@
 
                         <!-- Part Number -->
                         <div>
-                            <label for="part-number" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Part Number (PN) <span class="text-rose-500">*</span></label>
-                            <input type="text" id="part-number" placeholder="Ex: 937900120" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100" required>
+                            <label for="part-number" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Part Number (PN) <span class="text-rose-500">*</span></label>
+                            <input type="text" id="part-number" placeholder="Ex: 937900120" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100" required>
                         </div>
 
                         <!-- Descriere (Optional Field after Part Number) -->
                         <div>
-                            <label for="description" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Descriere</label>
-                            <input type="text" id="description" placeholder="Ex: Cablu alimentare M12, suport rotativ..." class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100">
+                            <label for="description" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Descriere</label>
+                            <input type="text" id="description" placeholder="Ex: Cablu alimentare M12, suport..." class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100">
                         </div>
 
                         <!-- Serial Number (Editable with Datalist Linked to Equipment Type) -->
                         <div>
-                            <label for="serial-number" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Serial Number (SN) <span id="sn-required-star" class="text-rose-500">*</span></label>
+                            <label for="serial-number" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Serial Number (SN) <span id="sn-required-star" class="text-rose-500">*</span></label>
                             <div class="relative">
-                                <input type="text" id="serial-number" list="sn-list" placeholder="Scrie SN sau selectează..." class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100" required>
+                                <input type="text" id="serial-number" list="sn-list" placeholder="Scrie SN sau selectează..." class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100" required>
                                 <datalist id="sn-list">
                                     <!-- Options will be populated dynamically based on selected equipment type -->
                                 </datalist>
                             </div>
-                            <p class="mt-1 text-xs text-slate-400">Poți selecta un SN din listă sau introduce unul nou direct.</p>
                         </div>
 
                         <!-- Locatie (Editable with Datalist) -->
                         <div>
-                            <label for="location" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Locație <span class="text-rose-500">*</span></label>
+                            <label for="location" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Locație <span class="text-rose-500">*</span></label>
                             <div class="relative">
-                                <input type="text" id="location" list="location-list" placeholder="Scrie locația sau selectează..." class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100" required>
+                                <input type="text" id="location" list="location-list" placeholder="Scrie locația..." class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100" required>
                                 <datalist id="location-list">
                                     <!-- Prepopulated dynamically from configuration -->
                                 </datalist>
                             </div>
                         </div>
 
-                        <button type="submit" id="btn-submit" class="w-full inline-flex items-center justify-center space-x-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-slate-800 focus:outline-none">
+                        <button type="submit" id="btn-submit" class="w-full inline-flex items-center justify-center space-x-1.5 rounded-lg bg-slate-900 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none">
                             <i class="fa-solid fa-plus-circle"></i>
                             <span id="submit-btn-text">Adaugă în listă</span>
                         </button>
@@ -159,30 +158,30 @@
 
             <!-- Right Side: Configured Devices Table -->
             <div class="lg:col-span-2">
-                <div class="rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 bg-slate-50/50 p-6 gap-4">
+                <div class="rounded-xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 bg-slate-50/50 px-5 py-4 gap-4">
                         <div>
-                            <h2 class="text-base font-bold text-slate-900">Echipamente Configurate</h2>
-                            <p class="text-xs text-slate-500">Lista curentă de echipamente stocate în configurația locală</p>
+                            <h2 class="text-sm font-bold text-slate-900">Echipamente Configurate</h2>
+                            <p class="text-[11px] text-slate-400">Lista curentă de echipamente stocate</p>
                         </div>
                         <!-- Search Bar -->
                         <div class="relative max-w-xs w-full">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                            <input type="text" id="search-input" oninput="renderRecords()" placeholder="Caută echipament..." class="w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                            <input type="text" id="search-input" oninput="renderRecords()" placeholder="Caută echipament..." class="w-full rounded-lg border border-slate-200 bg-white pl-8 pr-3 py-1.5 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100">
                         </div>
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="w-full border-collapse text-left text-sm text-slate-600">
-                            <thead class="bg-slate-50/75 border-b border-slate-100 text-xs font-bold uppercase tracking-wider text-slate-500">
+                        <table class="w-full border-collapse text-left text-xs text-slate-600">
+                            <thead class="bg-slate-50/75 border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-400">
                                 <tr>
-                                    <th class="px-6 py-4 font-bold text-center">Nr. Crt</th>
-                                    <th class="px-6 py-4">Tip Echipament</th>
-                                    <th class="px-6 py-4">Part Number (PN)</th>
-                                    <th class="px-6 py-4">Descriere</th>
-                                    <th class="px-6 py-4">Serial Number (SN)</th>
-                                    <th class="px-6 py-4">Locație</th>
-                                    <th class="px-6 py-4 text-right">Acțiuni</th>
+                                    <th class="px-4 py-3 font-bold text-center w-12">Nr. Crt</th>
+                                    <th class="px-4 py-3">Tip Echipament</th>
+                                    <th class="px-4 py-3">Part Number (PN)</th>
+                                    <th class="px-4 py-3">Descriere</th>
+                                    <th class="px-4 py-3">Serial Number (SN)</th>
+                                    <th class="px-4 py-3">Locație</th>
+                                    <th class="px-4 py-3 text-center w-24">Acțiuni</th>
                                 </tr>
                             </thead>
                             <tbody id="records-tbody" class="divide-y divide-slate-100">
@@ -192,12 +191,12 @@
                     </div>
 
                     <!-- Empty state -->
-                    <div id="empty-state" class="hidden flex flex-col items-center justify-center p-12 text-center">
-                        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-400 mb-4">
-                            <i class="fa-solid fa-box-open text-2xl"></i>
+                    <div id="empty-state" class="hidden flex flex-col items-center justify-center p-8 text-center">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-50 text-slate-400 mb-3">
+                            <i class="fa-solid fa-box-open text-xl"></i>
                         </div>
-                        <h3 class="text-sm font-bold text-slate-900">Nu există echipamente</h3>
-                        <p class="text-xs text-slate-500 mt-1">Introduceți datele în formularul din stânga pentru a adăuga primul dispozitiv.</p>
+                        <h3 class="text-xs font-bold text-slate-900">Nu există echipamente</h3>
+                        <p class="text-[11px] text-slate-400 mt-0.5">Introduceți datele în formularul din stânga.</p>
                     </div>
                 </div>
             </div>
@@ -326,13 +325,13 @@
 
                 // Index is the row's physical sequence / Nr Crt
                 var indexCell = document.createElement("td");
-                indexCell.className = "px-6 py-4 text-center font-bold text-slate-400";
+                indexCell.className = "px-4 py-2.5 text-center font-bold text-slate-400";
                 indexCell.textContent = i + 1;
                 row.appendChild(indexCell);
 
                 // Equipment Type Badge
                 var typeCell = document.createElement("td");
-                typeCell.className = "px-6 py-4 font-semibold text-slate-900";
+                typeCell.className = "px-4 py-2.5 font-medium text-slate-900";
                 var badgeClass = "bg-slate-100 text-slate-800";
                 if (rec.equipmentType.indexOf("Matrix") !== -1) {
                     badgeClass = "bg-indigo-50 text-indigo-700";
@@ -345,42 +344,42 @@
                 } else if (rec.equipmentType === "Cabluri") {
                     badgeClass = "bg-sky-50 text-sky-700";
                 }
-                typeCell.innerHTML = '<span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-semibold ' + badgeClass + '">' + rec.equipmentType + '</span>';
+                typeCell.innerHTML = '<span class="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-semibold ' + badgeClass + '">' + rec.equipmentType + '</span>';
                 row.appendChild(typeCell);
 
-                // Part Number
+                // Part Number & Serial Number with matching fonts (font-mono, tracking-tight, same size)
                 var pnCell = document.createElement("td");
-                pnCell.className = "px-6 py-4 font-mono text-xs text-slate-600";
+                pnCell.className = "px-4 py-2.5 font-mono text-[11px] text-slate-600 tracking-tight";
                 pnCell.textContent = rec.partNumber;
                 row.appendChild(pnCell);
 
-                // Descriere
+                // Descriere (Smaller font to keep the UI clean, uniform, and less crowded)
                 var descCell = document.createElement("td");
-                descCell.className = "px-6 py-4 text-slate-600 max-w-xs truncate";
+                descCell.className = "px-4 py-2.5 text-[10px] text-slate-400 italic max-w-[180px] truncate";
                 descCell.textContent = rec.description || "-";
                 row.appendChild(descCell);
 
-                // Serial Number
+                // Serial Number with matching fonts
                 var snCell = document.createElement("td");
-                snCell.className = "px-6 py-4 font-mono text-xs font-semibold text-slate-900";
+                snCell.className = "px-4 py-2.5 font-mono text-[11px] text-slate-600 tracking-tight font-semibold";
                 snCell.textContent = rec.serialNumber || "N/A";
                 row.appendChild(snCell);
 
                 // Location Badge
                 var locCell = document.createElement("td");
-                locCell.className = "px-6 py-4 text-slate-600";
-                locCell.innerHTML = '<span class="inline-flex items-center space-x-1.5"><i class="fa-solid fa-location-dot text-slate-400"></i> <span>' + rec.location + '</span></span>';
+                locCell.className = "px-4 py-2.5 text-slate-500 text-[11px]";
+                locCell.innerHTML = '<span class="inline-flex items-center space-x-1"><i class="fa-solid fa-location-dot text-slate-400 text-[10px]"></i> <span>' + rec.location + '</span></span>';
                 row.appendChild(locCell);
 
-                // Action buttons
+                // Action buttons rendered strictly inline (whitespace-nowrap)
                 var actionCell = document.createElement("td");
-                actionCell.className = "px-6 py-4 text-right space-x-2";
+                actionCell.className = "px-4 py-2.5 text-center whitespace-nowrap space-x-1.5";
                 actionCell.innerHTML =
-                    '<button onclick="startEdit(' + rec.id + ')" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-indigo-600" title="Editează">' +
-                    '  <i class="fa-solid fa-pen text-xs"></i>' +
+                    '<button onclick="startEdit(' + rec.id + ')" class="inline-flex h-6 w-6 items-center justify-center rounded border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:bg-slate-50 hover:text-indigo-600" title="Editează">' +
+                    '  <i class="fa-solid fa-pen text-[9px]"></i>' +
                     '</button>' +
-                    '<button onclick="deleteRecord(' + rec.id + ')" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-rose-600" title="Șterge">' +
-                    '  <i class="fa-solid fa-trash-can text-xs"></i>' +
+                    '<button onclick="deleteRecord(' + rec.id + ')" class="inline-flex h-6 w-6 items-center justify-center rounded border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:bg-slate-50 hover:text-rose-600" title="Șterge">' +
+                    '  <i class="fa-solid fa-trash-can text-[9px]"></i>' +
                     '</button>';
                 row.appendChild(actionCell);
 
@@ -505,8 +504,8 @@
 
             // Update UI elements for edit state
             document.getElementById("form-title").innerHTML = '<i class="fa-solid fa-pen text-indigo-600"></i> Modifică Echipamentul';
-            document.getElementById("submit-btn-text").textContent = "Salvează modificările";
-            document.getElementById("btn-submit").className = "w-full inline-flex items-center justify-center space-x-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-indigo-700 focus:outline-none";
+            document.getElementById("submit-btn-text").textContent = "Salvează";
+            document.getElementById("btn-submit").className = "w-full inline-flex items-center justify-center space-x-1.5 rounded-lg bg-indigo-600 px-4 py-2.5 text-xs font-semibold text-white shadow-md transition hover:bg-indigo-700 focus:outline-none";
             document.getElementById("btn-cancel-edit").classList.remove("hidden");
         }
 
@@ -520,7 +519,7 @@
             // Restore add state labels and button colors
             document.getElementById("form-title").innerHTML = '<i class="fa-solid fa-circle-plus text-indigo-600"></i> Adaugă Echipament Nou';
             document.getElementById("submit-btn-text").textContent = "Adaugă în listă";
-            document.getElementById("btn-submit").className = "w-full inline-flex items-center justify-center space-x-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-slate-800 focus:outline-none";
+            document.getElementById("btn-submit").className = "w-full inline-flex items-center justify-center space-x-1.5 rounded-lg bg-slate-900 px-4 py-2.5 text-xs font-semibold text-white shadow-md transition hover:bg-slate-800 focus:outline-none";
             document.getElementById("btn-cancel-edit").classList.add("hidden");
         }
 
