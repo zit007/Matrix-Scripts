@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurator Echipamente Industriale v1.0.3</title>
+    <title>Configurator Echipamente Industriale v1.0.4</title>
     <!-- Tailwind CSS CDN for a modern, responsive interface -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -27,7 +27,7 @@
             <div>
                 <div class="flex items-center space-x-2">
                     <h1 class="text-lg font-bold tracking-tight text-slate-900">Configurator Echipamente</h1>
-                    <span class="inline-flex items-center rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-700/10">v1.0.3</span>
+                    <span class="inline-flex items-center rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-700/10">v1.0.4</span>
                 </div>
                 <p class="text-xs font-medium text-slate-500">Gestiune & Identificare Datalogic & Thor</p>
             </div>
@@ -109,6 +109,8 @@
                                 <option value="Matrix 320 2MPx">Matrix 320 2MPx</option>
                                 <option value="Matrix 320 5MPx">Matrix 320 5MPx</option>
                                 <option value="Thor">Thor</option>
+                                <option value="Accesorii">Accesorii</option>
+                                <option value="Cabluri">Cabluri</option>
                             </select>
                         </div>
 
@@ -118,9 +120,15 @@
                             <input type="text" id="part-number" placeholder="Ex: 937900120" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100" required>
                         </div>
 
+                        <!-- Descriere (Optional Field after Part Number) -->
+                        <div>
+                            <label for="description" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Descriere</label>
+                            <input type="text" id="description" placeholder="Ex: Cablu alimentare M12, suport rotativ..." class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100">
+                        </div>
+
                         <!-- Serial Number (Editable with Datalist Linked to Equipment Type) -->
                         <div>
-                            <label for="serial-number" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Serial Number (SN) <span class="text-rose-500">*</span></label>
+                            <label for="serial-number" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Serial Number (SN) <span id="sn-required-star" class="text-rose-500">*</span></label>
                             <div class="relative">
                                 <input type="text" id="serial-number" list="sn-list" placeholder="Scrie SN sau selectează..." class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100" required>
                                 <datalist id="sn-list">
@@ -171,6 +179,7 @@
                                     <th class="px-6 py-4 font-bold text-center">Nr. Crt</th>
                                     <th class="px-6 py-4">Tip Echipament</th>
                                     <th class="px-6 py-4">Part Number (PN)</th>
+                                    <th class="px-6 py-4">Descriere</th>
                                     <th class="px-6 py-4">Serial Number (SN)</th>
                                     <th class="px-6 py-4">Locație</th>
                                     <th class="px-6 py-4 text-right">Acțiuni</th>
@@ -205,15 +214,18 @@
         "Matrix 220": ["M220-3321", "M220-4491", "M220-7711"],
         "Matrix 320 2MPx": ["M320_2M-9021", "M320_2M-1123", "M320_2M-8843"],
         "Matrix 320 5MPx": ["M320_5M-5511", "M320_5M-6622", "M320_5M-7733"],
-        "Thor": ["TH-1211", "TH-4322", "TH-9081"]
+        "Thor": ["TH-1211", "TH-4322", "TH-9081"],
+        "Accesorii": [],
+        "Cabluri": []
       },
       "locations": ["Zona A - Asamblare", "Zona B - Sortare", "Zona C - Ambalare", "Depozit Central", "Laborator Calitate"],
-      "equipmentTypes": ["Blade", "Matrix 120", "Matrix 220", "Matrix 320 2MPx", "Matrix 320 5MPx", "Thor"],
+      "equipmentTypes": ["Blade", "Matrix 120", "Matrix 220", "Matrix 320 2MPx", "Matrix 320 5MPx", "Thor", "Accesorii", "Cabluri"],
       "records": [
         {
           "id": 1,
           "equipmentType": "Matrix 320 5MPx",
           "partNumber": "937900120",
+          "description": "Scanner principal linie asamblare",
           "serialNumber": "M320_5M-5511",
           "location": "Zona B - Sortare"
         },
@@ -221,6 +233,7 @@
           "id": 2,
           "equipmentType": "Thor",
           "partNumber": "93A050043",
+          "description": "Terminal mobil operator",
           "serialNumber": "TH-1211",
           "location": "Zona A - Asamblare"
         }
@@ -241,6 +254,7 @@
         });
 
         // Dynamic update of datalist for Serial Numbers depending on Equipment Type selection
+        // Also controls SN mandatory validation state
         function onEquipmentTypeChange() {
             var selectedType = document.getElementById("equipment-type").value;
             var snDatalist = document.getElementById("sn-list");
@@ -253,6 +267,20 @@
                     option.value = suggestedSNs[i];
                     snDatalist.appendChild(option);
                 }
+            }
+
+            var snRequiredStar = document.getElementById("sn-required-star");
+            var snInput = document.getElementById("serial-number");
+
+            // Cabluri and Accesorii types do not require a Serial Number (non-mandatory)
+            if (selectedType === "Cabluri" || selectedType === "Accesorii") {
+                snRequiredStar.classList.add("hidden");
+                snInput.removeAttribute("required");
+                snInput.placeholder = "Scrie SN sau selectează (Opțional)...";
+            } else {
+                snRequiredStar.classList.remove("hidden");
+                snInput.setAttribute("required", "required");
+                snInput.placeholder = "Scrie SN sau selectează...";
             }
         }
 
@@ -277,8 +305,10 @@
 
             // Filter records based on search term
             var filteredRecords = config.records.filter(function(rec) {
+                var desc = rec.description || "";
                 return rec.equipmentType.toLowerCase().indexOf(searchTerm) !== -1 ||
                        rec.partNumber.toLowerCase().indexOf(searchTerm) !== -1 ||
+                       desc.toLowerCase().indexOf(searchTerm) !== -1 ||
                        rec.serialNumber.toLowerCase().indexOf(searchTerm) !== -1 ||
                        rec.location.toLowerCase().indexOf(searchTerm) !== -1;
             });
@@ -310,6 +340,10 @@
                     badgeClass = "bg-emerald-50 text-emerald-700";
                 } else if (rec.equipmentType === "Blade") {
                     badgeClass = "bg-amber-50 text-amber-700";
+                } else if (rec.equipmentType === "Accesorii") {
+                    badgeClass = "bg-purple-50 text-purple-700";
+                } else if (rec.equipmentType === "Cabluri") {
+                    badgeClass = "bg-sky-50 text-sky-700";
                 }
                 typeCell.innerHTML = '<span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-semibold ' + badgeClass + '">' + rec.equipmentType + '</span>';
                 row.appendChild(typeCell);
@@ -320,10 +354,16 @@
                 pnCell.textContent = rec.partNumber;
                 row.appendChild(pnCell);
 
+                // Descriere
+                var descCell = document.createElement("td");
+                descCell.className = "px-6 py-4 text-slate-600 max-w-xs truncate";
+                descCell.textContent = rec.description || "-";
+                row.appendChild(descCell);
+
                 // Serial Number
                 var snCell = document.createElement("td");
                 snCell.className = "px-6 py-4 font-mono text-xs font-semibold text-slate-900";
-                snCell.textContent = rec.serialNumber;
+                snCell.textContent = rec.serialNumber || "N/A";
                 row.appendChild(snCell);
 
                 // Location Badge
@@ -374,11 +414,20 @@
             var editId = document.getElementById("edit-id").value;
             var equipmentType = document.getElementById("equipment-type").value;
             var partNumber = document.getElementById("part-number").value.trim();
+            var description = document.getElementById("description").value.trim();
             var serialNumber = document.getElementById("serial-number").value.trim();
             var location = document.getElementById("location").value.trim();
 
-            if (!equipmentType || !partNumber || !serialNumber || !location) {
+            if (!equipmentType || !partNumber || !location) {
                 alert("Te rugăm să completezi toate câmpurile obligatorii.");
+                return;
+            }
+
+            // For Cabluri and Accesorii, if SN is empty, set default "N/A"
+            if ((equipmentType === "Cabluri" || equipmentType === "Accesorii") && serialNumber === "") {
+                serialNumber = "N/A";
+            } else if (!serialNumber) {
+                alert("Te rugăm să completezi câmpul Serial Number.");
                 return;
             }
 
@@ -392,7 +441,7 @@
             if (!config.serialNumbers[equipmentType]) {
                 config.serialNumbers[equipmentType] = [];
             }
-            if (config.serialNumbers[equipmentType].indexOf(serialNumber) === -1) {
+            if (serialNumber !== "N/A" && config.serialNumbers[equipmentType].indexOf(serialNumber) === -1) {
                 config.serialNumbers[equipmentType].push(serialNumber);
             }
 
@@ -403,6 +452,7 @@
                     if (config.records[i].id === idNum) {
                         config.records[i].equipmentType = equipmentType;
                         config.records[i].partNumber = partNumber;
+                        config.records[i].description = description;
                         config.records[i].serialNumber = serialNumber;
                         config.records[i].location = location;
                         break;
@@ -415,6 +465,7 @@
                     id: newId,
                     equipmentType: equipmentType,
                     partNumber: partNumber,
+                    description: description,
                     serialNumber: serialNumber,
                     location: location
                 });
@@ -440,8 +491,16 @@
             document.getElementById("record-idx").value = "Modifică înregistrarea: " + id;
             document.getElementById("equipment-type").value = target.equipmentType;
             document.getElementById("part-number").value = target.partNumber;
+            document.getElementById("description").value = target.description || "";
             onEquipmentTypeChange(); // populate SN list based on new selection
-            document.getElementById("serial-number").value = target.serialNumber;
+
+            // Set SN input value, but clear if it is "N/A" and type allows optional SN
+            if (target.serialNumber === "N/A" && (target.equipmentType === "Cabluri" || target.equipmentType === "Accesorii")) {
+                document.getElementById("serial-number").value = "";
+            } else {
+                document.getElementById("serial-number").value = target.serialNumber;
+            }
+
             document.getElementById("location").value = target.location;
 
             // Update UI elements for edit state
