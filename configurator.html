@@ -476,6 +476,9 @@
          * Key Innovation: Serializes current configurations as JSON and injects
          * it into the exact same HTML script element, then triggers download.
          * The downloaded file acts as its own state database!
+         *
+         * Note: To prevent browser parser issues with literal '</script>' within the script body,
+         * we construct the patterns dynamically.
          */
         function downloadUpdatedHTML() {
             // Get original HTML content
@@ -484,10 +487,9 @@
             // Parse and extract the current config as string
             var currentConfigString = JSON.stringify(config, null, 6);
 
-            // Using standard string manipulation (regex/split) to cleanly replace content of the script block
-            // to avoid any character encoding or state initialization issues.
-            var startPattern = '<script id="config-data" type="application/json">';
-            var endPattern = '</script>';
+            // Construct tags dynamically to prevent HTML parser premature closing issues
+            var startPattern = '<sc' + 'ript id="config-data" type="application/json">';
+            var endPattern = '</sc' + 'ript>';
 
             var startIndex = htmlContent.indexOf(startPattern);
             var endIndex = htmlContent.indexOf(endPattern, startIndex);
@@ -499,7 +501,7 @@
                 // Create clean HTML document structure
                 var blob = new Blob(["<!DOCTYPE html>\n" + updatedHTML], {type: "text/html;charset=utf-8"});
 
-                // Create downlad link
+                // Create download link
                 var downloadLink = document.createElement("a");
                 downloadLink.href = URL.createObjectURL(blob);
                 downloadLink.download = "configurator.html";
