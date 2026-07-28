@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurator Echipamente Industriale v1.0.6</title>
+    <title>Configurator Echipamente Industriale v1.0.7</title>
     <!-- Tailwind CSS CDN for a modern, responsive interface -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome for beautiful modern icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -18,66 +18,67 @@
 </head>
 <body class="min-h-screen text-slate-800 antialiased">
 
-    <!-- Top Navigation Bar (Restored Professional Heights & Layout) -->
-    <header class="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white/95 px-6 shadow-sm backdrop-blur">
+    <!-- Top Navigation Bar - Fully Responsive -->
+    <header class="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white/95 px-4 sm:px-6 shadow-sm backdrop-blur">
         <div class="flex items-center space-x-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-200">
+            <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-200">
                 <i class="fa-solid fa-microchip text-lg"></i>
             </div>
-            <div>
+            <div class="min-w-0">
                 <div class="flex items-center space-x-2">
-                    <h1 class="text-base font-bold tracking-tight text-slate-900">Configurator Echipamente</h1>
-                    <span class="inline-flex items-center rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-700/10">v1.0.6</span>
+                    <h1 class="text-sm sm:text-base font-bold tracking-tight text-slate-900 truncate">Configurator Echipamente</h1>
+                    <span class="inline-flex items-center rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-700/10 flex-shrink-0">v1.0.7</span>
                 </div>
-                <p class="text-xs font-medium text-slate-500">Gestiune & Identificare Datalogic & Thor</p>
+                <p class="hidden sm:block text-xs font-medium text-slate-500">Gestiune & Identificare Datalogic & Thor</p>
             </div>
         </div>
-        <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-2 sm:space-x-4">
             <!-- Save/Download Button -->
-            <button onclick="downloadUpdatedHTML()" class="inline-flex items-center space-x-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-100 transition hover:bg-indigo-700 hover:shadow-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            <button onclick="downloadUpdatedHTML()" class="inline-flex items-center space-x-1.5 sm:space-x-2 rounded-xl bg-indigo-600 px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-indigo-100 transition hover:bg-indigo-700 hover:shadow-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                 <i class="fa-solid fa-floppy-disk"></i>
-                <span>Salvează Config în HTML</span>
+                <span class="hidden xs:inline">Salvează Config</span>
+                <span class="inline xs:hidden">Salvează</span>
             </button>
         </div>
     </header>
 
-    <main class="mx-auto max-w-7xl p-6 lg:p-8">
+    <main class="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
 
-        <!-- Quick stats cards -->
-        <div class="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
-            <div class="flex items-center space-x-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                    <i class="fa-solid fa-list-ol text-xl"></i>
+        <!-- Quick stats cards - Responsive Grid -->
+        <div class="mb-6 sm:mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div class="flex items-center space-x-4 rounded-2xl border border-slate-200/80 bg-white p-4 sm:p-5 shadow-sm">
+                <div class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600 flex-shrink-0">
+                    <i class="fa-solid fa-list-ol text-lg sm:text-xl"></i>
                 </div>
                 <div>
-                    <p class="text-sm font-medium text-slate-500">Total Înregistrări</p>
-                    <p id="stat-total-records" class="text-2xl font-bold text-slate-900">0</p>
+                    <p class="text-xs sm:text-sm font-medium text-slate-500">Total Înregistrări</p>
+                    <p id="stat-total-records" class="text-xl sm:text-2xl font-bold text-slate-900">0</p>
                 </div>
             </div>
-            <div class="flex items-center space-x-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-                    <i class="fa-solid fa-barcode text-xl"></i>
+            <div class="flex items-center space-x-4 rounded-2xl border border-slate-200/80 bg-white p-4 sm:p-5 shadow-sm">
+                <div class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 flex-shrink-0">
+                    <i class="fa-solid fa-barcode text-lg sm:text-xl"></i>
                 </div>
                 <div>
-                    <p class="text-sm font-medium text-slate-500">Scannere Matrix active</p>
-                    <p id="stat-matrix-scanners" class="text-2xl font-bold text-slate-900">0</p>
+                    <p class="text-xs sm:text-sm font-medium text-slate-500">Scannere Matrix active</p>
+                    <p id="stat-matrix-scanners" class="text-xl sm:text-2xl font-bold text-slate-900">0</p>
                 </div>
             </div>
-            <div class="flex items-center space-x-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-                    <i class="fa-solid fa-location-dot text-xl"></i>
+            <div class="flex items-center space-x-4 rounded-2xl border border-slate-200/80 bg-white p-4 sm:p-5 shadow-sm">
+                <div class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 flex-shrink-0">
+                    <i class="fa-solid fa-location-dot text-lg sm:text-xl"></i>
                 </div>
                 <div>
-                    <p class="text-sm font-medium text-slate-500">Locații Utilizate</p>
-                    <p id="stat-unique-locations" class="text-2xl font-bold text-slate-900">0</p>
+                    <p class="text-xs sm:text-sm font-medium text-slate-500">Locații Utilizate</p>
+                    <p id="stat-unique-locations" class="text-xl sm:text-2xl font-bold text-slate-900">0</p>
                 </div>
             </div>
         </div>
 
-        <!-- 4-column layout: Left frame gets 1 column (narrowed), Right frame gets 3 columns (expanded) -->
-        <div class="grid grid-cols-1 gap-8 lg:grid-cols-4">
+        <!-- 4-column layout: Mobile-first stacked, lg screens get 1 col input, 3 cols table -->
+        <div class="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-4">
 
-            <!-- Left Side Selection/Input Frame (Narrowed to 1 column out of 4) -->
+            <!-- Left Side Selection/Input Frame (Responsive layout) -->
             <div class="lg:col-span-1">
                 <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
                     <div class="mb-5 flex items-center justify-between border-b border-slate-100 pb-3">
@@ -102,7 +103,7 @@
                         <!-- Tip Echipament -->
                         <div>
                             <label for="equipment-type" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Tip Echipament <span class="text-rose-500">*</span></label>
-                            <select id="equipment-type" onchange="onEquipmentTypeChange()" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100" required>
+                            <select id="equipment-type" onchange="onEquipmentTypeChange()" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100 cursor-pointer" required>
                                 <option value="" disabled selected>Selectează tipul...</option>
                                 <option value="Blade">Blade</option>
                                 <option value="Matrix 120">Matrix 120</option>
@@ -149,7 +150,7 @@
                             </div>
                         </div>
 
-                        <button type="submit" id="btn-submit" class="w-full inline-flex items-center justify-center space-x-1.5 rounded-lg bg-slate-900 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none">
+                        <button type="submit" id="btn-submit" class="w-full inline-flex items-center justify-center space-x-1.5 rounded-lg bg-slate-900 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none cursor-pointer">
                             <i class="fa-solid fa-plus-circle"></i>
                             <span id="submit-btn-text">Adaugă în listă</span>
                         </button>
@@ -157,10 +158,10 @@
                 </div>
             </div>
 
-            <!-- Right Side: Configured Devices Table (Expanded to 3 columns out of 4) -->
+            <!-- Right Side: Configured Devices Table (Scrollable & Responsive) -->
             <div class="lg:col-span-3">
                 <div class="rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 bg-slate-50/50 p-6 gap-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 bg-slate-50/50 p-4 sm:p-6 gap-4">
                         <div>
                             <h2 class="text-base font-bold text-slate-900">Echipamente Configurate</h2>
                             <p class="text-xs text-slate-500">Lista curentă de echipamente stocate în configurația locală</p>
@@ -172,17 +173,18 @@
                         </div>
                     </div>
 
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse text-left text-sm text-slate-600">
+                    <!-- Responsive Wrapper to allow table scrolling on mobile viewports -->
+                    <div class="w-full overflow-x-auto">
+                        <table class="w-full min-w-[700px] border-collapse text-left text-sm text-slate-600">
                             <thead class="bg-slate-50/75 border-b border-slate-100 text-xs font-bold uppercase tracking-wider text-slate-500">
                                 <tr>
-                                    <th class="px-6 py-4 font-bold text-center w-14">Nr. Crt</th>
-                                    <th class="px-6 py-4">Tip Echipament</th>
-                                    <th class="px-6 py-4">Part Number (PN)</th>
-                                    <th class="px-6 py-4">Descriere</th>
-                                    <th class="px-6 py-4">Serial Number (SN)</th>
-                                    <th class="px-6 py-4">Locație</th>
-                                    <th class="px-6 py-4 text-center w-28">Acțiuni</th>
+                                    <th class="px-4 sm:px-6 py-4 font-bold text-center w-14">Nr. Crt</th>
+                                    <th class="px-4 sm:px-6 py-4">Tip Echipament</th>
+                                    <th class="px-4 sm:px-6 py-4">Part Number (PN)</th>
+                                    <th class="px-4 sm:px-6 py-4">Descriere</th>
+                                    <th class="px-4 sm:px-6 py-4">Serial Number (SN)</th>
+                                    <th class="px-4 sm:px-6 py-4">Locație</th>
+                                    <th class="px-4 sm:px-6 py-4 text-center w-28">Acțiuni</th>
                                 </tr>
                             </thead>
                             <tbody id="records-tbody" class="divide-y divide-slate-100">
@@ -326,13 +328,13 @@
 
                 // Index is the row's physical sequence / Nr Crt
                 var indexCell = document.createElement("td");
-                indexCell.className = "px-6 py-4 text-center font-bold text-slate-400";
+                indexCell.className = "px-4 sm:px-6 py-4 text-center font-bold text-slate-400";
                 indexCell.textContent = i + 1;
                 row.appendChild(indexCell);
 
                 // Equipment Type Badge (Increased font size by 0.5 (text-xs = 0.75rem, text-sm = 0.875rem))
                 var typeCell = document.createElement("td");
-                typeCell.className = "px-6 py-4 font-semibold text-slate-900";
+                typeCell.className = "px-4 sm:px-6 py-4 font-semibold text-slate-900";
                 var badgeClass = "bg-slate-100 text-slate-800";
                 if (rec.equipmentType.indexOf("Matrix") !== -1) {
                     badgeClass = "bg-indigo-50 text-indigo-700";
@@ -350,36 +352,36 @@
 
                 // Part Number (Matching font settings to Serial Number, professional text-sm size)
                 var pnCell = document.createElement("td");
-                pnCell.className = "px-6 py-4 font-mono text-sm text-slate-700 tracking-tight";
+                pnCell.className = "px-4 sm:px-6 py-4 font-mono text-sm text-slate-700 tracking-tight";
                 pnCell.textContent = rec.partNumber;
                 row.appendChild(pnCell);
 
                 // Descriere (Unmuted: text-slate-600, kept smaller text-xs to retain a clean unified hierarchy)
                 var descCell = document.createElement("td");
-                descCell.className = "px-6 py-4 text-xs text-slate-600 max-w-xs truncate";
+                descCell.className = "px-4 sm:px-6 py-4 text-xs text-slate-600 max-w-xs truncate";
                 descCell.textContent = rec.description || "-";
                 row.appendChild(descCell);
 
                 // Serial Number (Comparable typography and font size with Part Number, text-sm)
                 var snCell = document.createElement("td");
-                snCell.className = "px-6 py-4 font-mono text-sm font-semibold text-slate-900 tracking-tight";
+                snCell.className = "px-4 sm:px-6 py-4 font-mono text-sm font-semibold text-slate-900 tracking-tight";
                 snCell.textContent = rec.serialNumber || "N/A";
                 row.appendChild(snCell);
 
                 // Location Badge
                 var locCell = document.createElement("td");
-                locCell.className = "px-6 py-4 text-slate-600";
+                locCell.className = "px-4 sm:px-6 py-4 text-slate-600";
                 locCell.innerHTML = '<span class="inline-flex items-center space-x-1.5"><i class="fa-solid fa-location-dot text-slate-400"></i> <span>' + rec.location + '</span></span>';
                 row.appendChild(locCell);
 
                 // Action buttons rendered strictly inline (whitespace-nowrap)
                 var actionCell = document.createElement("td");
-                actionCell.className = "px-6 py-4 text-center whitespace-nowrap space-x-2";
+                actionCell.className = "px-4 sm:px-6 py-4 text-center whitespace-nowrap space-x-2";
                 actionCell.innerHTML =
-                    '<button onclick="startEdit(' + rec.id + ')" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-indigo-600" title="Editează">' +
+                    '<button onclick="startEdit(' + rec.id + ')" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-indigo-600 cursor-pointer" title="Editează">' +
                     '  <i class="fa-solid fa-pen text-xs"></i>' +
                     '</button>' +
-                    '<button onclick="deleteRecord(' + rec.id + ')" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-rose-600" title="Șterge">' +
+                    '<button onclick="deleteRecord(' + rec.id + ')" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-rose-600 cursor-pointer" title="Șterge">' +
                     '  <i class="fa-solid fa-trash-can text-xs"></i>' +
                     '</button>';
                 row.appendChild(actionCell);
@@ -506,7 +508,7 @@
             // Update UI elements for edit state
             document.getElementById("form-title").innerHTML = '<i class="fa-solid fa-pen text-indigo-600"></i> Modifică Echipamentul';
             document.getElementById("submit-btn-text").textContent = "Salvează modificările";
-            document.getElementById("btn-submit").className = "w-full inline-flex items-center justify-center space-x-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-indigo-700 focus:outline-none";
+            document.getElementById("btn-submit").className = "w-full inline-flex items-center justify-center space-x-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-indigo-700 focus:outline-none cursor-pointer";
             document.getElementById("btn-cancel-edit").classList.remove("hidden");
         }
 
@@ -518,9 +520,9 @@
             onEquipmentTypeChange();
 
             // Restore add state labels and button colors
-            document.getElementById("form-title").innerHTML = '<i class="fa-solid fa-circle-plus text-indigo-600"></i> Adaugă Echipament Nou';
+            document.getElementById("form-title").innerHTML = '<i class="fa-solid fa-circle-plus text-indigo-600"></i> Adăugare';
             document.getElementById("submit-btn-text").textContent = "Adaugă în listă";
-            document.getElementById("btn-submit").className = "w-full inline-flex items-center justify-center space-x-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-slate-800 focus:outline-none";
+            document.getElementById("btn-submit").className = "w-full inline-flex items-center justify-center space-x-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-slate-800 focus:outline-none cursor-pointer";
             document.getElementById("btn-cancel-edit").classList.add("hidden");
         }
 
