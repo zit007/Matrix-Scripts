@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurator Echipamente Industriale v1.0.2</title>
+    <title>Configurator Echipamente Industriale v1.0.3</title>
     <!-- Tailwind CSS CDN for a modern, responsive interface -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -27,7 +27,7 @@
             <div>
                 <div class="flex items-center space-x-2">
                     <h1 class="text-lg font-bold tracking-tight text-slate-900">Configurator Echipamente</h1>
-                    <span class="inline-flex items-center rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-700/10">v1.0.2</span>
+                    <span class="inline-flex items-center rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-700/10">v1.0.3</span>
                 </div>
                 <p class="text-xs font-medium text-slate-500">Gestiune & Identificare Datalogic & Thor</p>
             </div>
@@ -166,6 +166,16 @@
 
                     <div class="overflow-x-auto">
                         <table class="w-full border-collapse text-left text-sm text-slate-600">
+                            <thead class="bg-slate-50/75 border-b border-slate-100 text-xs font-bold uppercase tracking-wider text-slate-500">
+                                <tr>
+                                    <th class="px-6 py-4 font-bold text-center">Nr. Crt</th>
+                                    <th class="px-6 py-4">Tip Echipament</th>
+                                    <th class="px-6 py-4">Part Number (PN)</th>
+                                    <th class="px-6 py-4">Serial Number (SN)</th>
+                                    <th class="px-6 py-4">Locație</th>
+                                    <th class="px-6 py-4 text-right">Acțiuni</th>
+                                </tr>
+                            </thead>
                             <tbody id="records-tbody" class="divide-y divide-slate-100">
                                 <!-- Dynamic rows go here -->
                             </tbody>
@@ -466,12 +476,8 @@
         }
 
         /**
-         * Key Innovation: Serializes current configurations as JSON and injects
-         * it into the exact same HTML script element, then triggers download.
+         * Dynamic string construction completely prevents HTML parser issues.
          * The downloaded file acts as its own state database!
-         *
-         * To prevent browser parser issues with literal '</script>' within the script body,
-         * we construct the patterns dynamically using character codes.
          */
         function downloadUpdatedHTML() {
             // Get original HTML content
@@ -480,8 +486,7 @@
             // Parse and extract the current config as string
             var currentConfigString = JSON.stringify(config, null, 6);
 
-            // Construct tags dynamically using String.fromCharCode to completely bypass
-            // premature parsing/execution in any serialization steps.
+            // Dynamically construct search keys to prevent browser parser from prematurely closing script
             var startPattern = String.fromCharCode(60) + 'script id="config-data" type="application/json"' + String.fromCharCode(62);
             var endPattern = String.fromCharCode(60) + '/script' + String.fromCharCode(62);
 
