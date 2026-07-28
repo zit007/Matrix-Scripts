@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurator Echipamente Industriale v1.1.0 (Cloud Hosted)</title>
+    <!-- Tailwind CSS CDN for a modern, responsive interface -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for beautiful modern icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 antialiased">
+
+    <!-- Top Navigation Bar - Fully Responsive -->
+    <header class="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white/95 px-4 sm:px-6 shadow-sm backdrop-blur">
+        <div class="flex items-center space-x-3">
+            <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-200">
+                <i class="fa-solid fa-cloud text-lg"></i>
+            </div>
+            <div class="min-w-0">
+                <div class="flex items-center space-x-2">
+                    <h1 class="text-sm sm:text-base font-bold tracking-tight text-slate-900 truncate">Configurator Cloud</h1>
+                    <span class="inline-flex items-center rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-700/10 flex-shrink-0">v1.1.0</span>
+                </div>
+                <p class="hidden sm:block text-xs font-medium text-slate-500">Gestiune sincronizată prin Cloud / LocalStorage</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2 sm:space-x-4">
+            <!-- Connection Status Badge -->
+            <span id="sync-status" class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2 py-1 text-xs font-medium text-amber-800 ring-1 ring-inset ring-amber-600/20">
+                <span class="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                <span>Mod Local (Offline)</span>
+            </span>
+            <!-- Settings Modal Button -->
+            <button onclick="toggleSettingsModal(true)" class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm hover:bg-slate-50 cursor-pointer" title="Configurare API Cloud">
+                <i class="fa-solid fa-gear"></i>
+            </button>
+            <!-- Sync/Save Button -->
+            <button onclick="saveConfiguration()" class="inline-flex items-center space-x-1.5 sm:space-x-2 rounded-xl bg-indigo-600 px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-indigo-100 transition hover:bg-indigo-700 hover:shadow-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 cursor-pointer">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <span>Salvează Config</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
+
+        <!-- API URL Banner Alert when not configured -->
+        <div id="api-alert-banner" class="mb-6 rounded-xl border border-blue-100 bg-blue-50/50 p-4 text-xs text-blue-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+            <span class="flex items-center gap-2">
+                <i class="fa-solid fa-circle-info text-blue-500 text-sm"></i>
+                <span>Aplicația rulează momentan în modul **LocalStorage**. Pentru a sincroniza datele în timp real între multiple dispozitive, asociați un API extern de Cloudflare din setări.</span>
+            </span>
+            <button onclick="toggleSettingsModal(true)" class="font-bold underline uppercase tracking-wider hover:text-blue-800 cursor-pointer">Setați URL API</button>
+        </div>
+
+        <!-- Quick stats cards -->
+        <div class="mb-6 sm:mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div class="flex items-center space-x-4 rounded-2xl border border-slate-200/80 bg-white p-4 sm:p-5 shadow-sm">
+                <div class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600 flex-shrink-0">
+                    <i class="fa-solid fa-list-ol text-lg sm:text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-xs sm:text-sm font-medium text-slate-500">Total Înregistrări</p>
+                    <p id="stat-total-records" class="text-xl sm:text-2xl font-bold text-slate-900">0</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4 rounded-2xl border border-slate-200/80 bg-white p-4 sm:p-5 shadow-sm">
+                <div class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 flex-shrink-0">
+                    <i class="fa-solid fa-barcode text-lg sm:text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-xs sm:text-sm font-medium text-slate-500">Scannere Matrix active</p>
+                    <p id="stat-matrix-scanners" class="text-xl sm:text-2xl font-bold text-slate-900">0</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4 rounded-2xl border border-slate-200/80 bg-white p-4 sm:p-5 shadow-sm">
+                <div class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 flex-shrink-0">
+                    <i class="fa-solid fa-location-dot text-lg sm:text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-xs sm:text-sm font-medium text-slate-500">Locații Utilizate</p>
+                    <p id="stat-unique-locations" class="text-xl sm:text-2xl font-bold text-slate-900">0</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-4">
+
+            <!-- Left Side: Add/Edit Form -->
+            <div class="lg:col-span-1">
+                <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+                    <div class="mb-5 flex items-center justify-between border-b border-slate-100 pb-3">
+                        <h2 id="form-title" class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-plus text-indigo-600"></i>
+                            <span>Adăugare</span>
+                        </h2>
+                        <button id="btn-cancel-edit" onclick="resetForm()" class="hidden text-xs font-semibold text-rose-500 hover:text-rose-600 transition">
+                            Anulează
+                        </button>
+                    </div>
+
+                    <form id="equipment-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                        <input type="hidden" id="edit-id" value="">
+
+                        <!-- Nr Curent -->
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Număr Curent</label>
+                            <input type="text" id="record-idx" class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-500 focus:outline-none" value="Auto-generat" readonly>
+                        </div>
+
+                        <!-- Tip Echipament -->
+                        <div>
+                            <label for="equipment-type" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Tip Echipament <span class="text-rose-500">*</span></label>
+                            <select id="equipment-type" onchange="onEquipmentTypeChange()" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100 cursor-pointer" required>
+                                <option value="" disabled selected>Selectează tipul...</option>
+                                <option value="Blade">Blade</option>
+                                <option value="Matrix 120">Matrix 120</option>
+                                <option value="Matrix 220">Matrix 220</option>
+                                <option value="Matrix 320 2MPx">Matrix 320 2MPx</option>
+                                <option value="Matrix 320 5MPx">Matrix 320 5MPx</option>
+                                <option value="Thor">Thor</option>
+                                <option value="Accesorii">Accesorii</option>
+                                <option value="Cabluri">Cabluri</option>
+                            </select>
+                        </div>
+
+                        <!-- Part Number -->
+                        <div>
+                            <label for="part-number" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Part Number (PN) <span class="text-rose-500">*</span></label>
+                            <input type="text" id="part-number" placeholder="Ex: 937900120" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100" required>
+                        </div>
+
+                        <!-- Descriere -->
+                        <div>
+                            <label for="description" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Descriere</label>
+                            <input type="text" id="description" placeholder="Ex: Cablu alimentare M12..." class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100">
+                        </div>
+
+                        <!-- Serial Number -->
+                        <div>
+                            <label for="serial-number" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Serial Number (SN) <span id="sn-required-star" class="text-rose-500">*</span></label>
+                            <div class="relative">
+                                <input type="text" id="serial-number" list="sn-list" placeholder="Scrie SN sau selectează..." class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100" required>
+                                <datalist id="sn-list">
+                                </datalist>
+                            </div>
+                        </div>
+
+                        <!-- Locatie -->
+                        <div>
+                            <label for="location" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Locație <span class="text-rose-500">*</span></label>
+                            <div class="relative">
+                                <input type="text" id="location" list="location-list" placeholder="Scrie locația..." class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100" required>
+                                <datalist id="location-list">
+                                </datalist>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="btn-submit" class="w-full inline-flex items-center justify-center space-x-1.5 rounded-lg bg-slate-900 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none cursor-pointer">
+                            <i class="fa-solid fa-plus-circle"></i>
+                            <span id="submit-btn-text">Adaugă în listă</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Side: Configured Devices Table -->
+            <div class="lg:col-span-3">
+                <div class="rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 bg-slate-50/50 p-4 sm:p-6 gap-4">
+                        <div>
+                            <h2 class="text-base font-bold text-slate-900">Echipamente Configurate</h2>
+                            <p class="text-xs text-slate-500">Sincronizate din baza de date centrală JSON / LocalStorage</p>
+                        </div>
+                        <!-- Search Bar -->
+                        <div class="relative max-w-xs w-full">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="text" id="search-input" oninput="renderRecords()" placeholder="Caută echipament..." class="w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100">
+                        </div>
+                    </div>
+
+                    <div class="w-full overflow-x-auto">
+                        <table class="w-full min-w-[700px] border-collapse text-left text-sm text-slate-600">
+                            <thead class="bg-slate-50/75 border-b border-slate-100 text-xs font-bold uppercase tracking-wider text-slate-500">
+                                <tr>
+                                    <th class="px-4 sm:px-6 py-4 font-bold text-center w-14">Nr. Crt</th>
+                                    <th class="px-4 sm:px-6 py-4">Tip Echipament</th>
+                                    <th class="px-4 sm:px-6 py-4">Part Number (PN)</th>
+                                    <th class="px-4 sm:px-6 py-4">Descriere</th>
+                                    <th class="px-4 sm:px-6 py-4">Serial Number (SN)</th>
+                                    <th class="px-4 sm:px-6 py-4">Locație</th>
+                                    <th class="px-4 sm:px-6 py-4 text-center w-28">Acțiuni</th>
+                                </tr>
+                            </thead>
+                            <tbody id="records-tbody" class="divide-y divide-slate-100">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Empty state -->
+                    <div id="empty-state" class="hidden flex flex-col items-center justify-center p-12 text-center">
+                        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-400 mb-4">
+                            <i class="fa-solid fa-box-open text-2xl"></i>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-900">Nu există echipamente</h3>
+                        <p class="text-xs text-slate-500 mt-1">Introduceți datele în formularul din stânga pentru a adăuga primul dispozitiv.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-2xl p-6 relative animate-in fade-in zoom-in-95 duration-200">
+            <button onclick="toggleSettingsModal(false)" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600 cursor-pointer">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-gears text-indigo-600"></i>
+                <span>Setări Conexiune Cloud (Cloudflare)</span>
+            </h3>
+            <p class="text-xs text-slate-500 mb-4">Introduceți adresa URL a API-ului dumneavoastră extern Cloudflare Worker pentru a citi și salva automat datele în cloud.</p>
+
+            <div class="space-y-4">
+                <div>
+                    <label for="settings-api-url" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">URL API Cloud</label>
+                    <input type="url" id="settings-api-url" placeholder="https://config-api.nume.workers.dev" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm focus:border-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label for="settings-api-key" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Cheie de Securitate (Opțional)</label>
+                    <input type="password" id="settings-api-key" placeholder="Parolă de acces API" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm focus:border-indigo-500 focus:outline-none">
+                </div>
+            </div>
+
+            <div class="mt-6 flex items-center justify-end space-x-3">
+                <button onclick="toggleSettingsModal(false)" class="px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-700 cursor-pointer">Anulează</button>
+                <button onclick="saveSettings()" class="px-4 py-2 rounded-lg bg-indigo-600 text-xs font-semibold text-white shadow-md hover:bg-indigo-700 cursor-pointer">Salvează setările</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Dynamic Context & Synchronizer -->
+    <script>
+        // Standard template configuration structure if no data exists locally or in API
+        var DEFAULT_TEMPLATE = {
+            "serialNumbers": {
+                "Blade": ["BL-9921", "BL-1034", "BL-4421"],
+                "Matrix 120": ["M120-8321", "M120-1092", "M120-4552"],
+                "Matrix 220": ["M220-3321", "M220-4491", "M220-7711"],
+                "Matrix 320 2MPx": ["M320_2M-9021", "M320_2M-1123", "M320_2M-8843"],
+                "Matrix 320 5MPx": ["M320_5M-5511", "M320_5M-6622", "M320_5M-7733"],
+                "Thor": ["TH-1211", "TH-4322", "TH-9081"],
+                "Accesorii": [],
+                "Cabluri": []
+            },
+            "locations": ["Zona A - Asamblare", "Zona B - Sortare", "Zona C - Ambalare", "Depozit Central", "Laborator Calitate"],
+            "equipmentTypes": ["Blade", "Matrix 120", "Matrix 220", "Matrix 320 2MPx", "Matrix 320 5MPx", "Thor", "Accesorii", "Cabluri"],
+            "records": [
+                {
+                    "id": 1,
+                    "equipmentType": "Matrix 320 5MPx",
+                    "partNumber": "937900120",
+                    "description": "Scanner principal linie asamblare",
+                    "serialNumber": "M320_5M-5511",
+                    "location": "Zona B - Sortare"
+                }
+            ]
+        };
+
+        var config = DEFAULT_TEMPLATE;
+
+        // Initialization
+        document.addEventListener("DOMContentLoaded", function() {
+            loadSettings();
+            fetchConfiguration();
+        });
+
+        // Load settings from localStorage
+        function loadSettings() {
+            var apiUrl = localStorage.getItem("hosted_api_url") || "";
+            var apiKey = localStorage.getItem("hosted_api_key") || "";
+            document.getElementById("settings-api-url").value = apiUrl;
+            document.getElementById("settings-api-key").value = apiKey;
+
+            if (apiUrl) {
+                document.getElementById("api-alert-banner").classList.add("hidden");
+            } else {
+                document.getElementById("api-alert-banner").classList.remove("hidden");
+            }
+        }
+
+        // Toggle modal visibility
+        function toggleSettingsModal(visible) {
+            var modal = document.getElementById("settings-modal");
+            if (visible) {
+                modal.classList.remove("hidden");
+            } else {
+                modal.classList.add("hidden");
+            }
+        }
+
+        // Save connection parameters in local client space
+        function saveSettings() {
+            var url = document.getElementById("settings-api-url").value.trim();
+            var key = document.getElementById("settings-api-key").value;
+
+            localStorage.setItem("hosted_api_url", url);
+            localStorage.setItem("hosted_api_key", key);
+
+            toggleSettingsModal(false);
+            loadSettings();
+            fetchConfiguration(); // pull data from the new host URL
+        }
+
+        // Load configuration from either the REST Cloud API or LocalStorage
+        function fetchConfiguration() {
+            var apiUrl = localStorage.getItem("hosted_api_url");
+            var apiKey = localStorage.getItem("hosted_api_key");
+
+            setSyncStatus("loading", "Sincronizare...");
+
+            if (apiUrl) {
+                // Cloud Sync logic
+                var headers = { "Content-Type": "application/json" };
+                if (apiKey) {
+                    headers["Authorization"] = "Bearer " + apiKey;
+                }
+
+                fetch(apiUrl, { method: "GET", headers: headers })
+                .then(function(res) {
+                    if (!res.ok) throw new Error("HTTP error " + res.status);
+                    return res.json();
+                })
+                .then(function(data) {
+                    config = data;
+                    localStorage.setItem("hosted_local_backup", JSON.stringify(data));
+                    setSyncStatus("cloud", "Conectat la Cloud");
+                    populateLocationsDatalist();
+                    onEquipmentTypeChange();
+                    renderRecords();
+                })
+                .catch(function(err) {
+                    console.error("Fetch failed. Loading backup", err);
+                    setSyncStatus("offline", "Eroare Cloud (Mod Offline)");
+                    loadLocalData();
+                });
+            } else {
+                // Local only fallback
+                setSyncStatus("offline", "Mod Local (Offline)");
+                loadLocalData();
+            }
+        }
+
+        // Fetch back up locally
+        function loadLocalData() {
+            var localData = localStorage.getItem("hosted_local_backup");
+            if (localData) {
+                try {
+                    config = JSON.parse(localData);
+                } catch (e) {
+                    config = DEFAULT_TEMPLATE;
+                }
+            } else {
+                config = DEFAULT_TEMPLATE;
+            }
+            populateLocationsDatalist();
+            onEquipmentTypeChange();
+            renderRecords();
+        }
+
+        // Save Configuration back to REST Cloud API or save locally in backup
+        function saveConfiguration() {
+            var apiUrl = localStorage.getItem("hosted_api_url");
+            var apiKey = localStorage.getItem("hosted_api_key");
+
+            // Write backup
+            localStorage.setItem("hosted_local_backup", JSON.stringify(config));
+
+            if (apiUrl) {
+                setSyncStatus("loading", "Se salvează în Cloud...");
+
+                var headers = { "Content-Type": "application/json" };
+                if (apiKey) {
+                    headers["Authorization"] = "Bearer " + apiKey;
+                }
+
+                fetch(apiUrl, {
+                    method: "POST",
+                    headers: headers,
+                    body: JSON.stringify(config)
+                })
+                .then(function(res) {
+                    if (!res.ok) throw new Error("HTTP error " + res.status);
+                    setSyncStatus("cloud", "Salvat în Cloud");
+                    alert("Datele au fost sincronizate cu succes în Cloudflare!");
+                })
+                .catch(function(err) {
+                    console.error("Save to cloud failed", err);
+                    setSyncStatus("offline", "Eroare salvare Cloud");
+                    alert("Salvare în cloud eșuată! Configurația a fost stocată local în browser.");
+                });
+            } else {
+                setSyncStatus("offline", "Salvat Local (Offline)");
+                alert("Configurația a fost salvată local în browser (LocalStorage).");
+            }
+        }
+
+        // Update top-right synchronizer badge status
+        function setSyncStatus(type, label) {
+            var badge = document.getElementById("sync-status");
+            badge.className = "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset";
+
+            var dotColor = "bg-slate-400";
+            if (type === "loading") {
+                badge.classList.add("bg-blue-50", "text-blue-800", "ring-blue-600/20");
+                dotColor = "bg-blue-500 animate-pulse";
+            } else if (type === "cloud") {
+                badge.classList.add("bg-emerald-50", "text-emerald-800", "ring-emerald-600/20");
+                dotColor = "bg-emerald-500";
+            } else {
+                badge.classList.add("bg-amber-50", "text-amber-800", "ring-amber-600/20");
+                dotColor = "bg-amber-500";
+            }
+            badge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full ' + dotColor + '"></span><span>' + label + '</span>';
+        }
+
+        // Dynamic update of datalist for Serial Numbers depending on Equipment Type selection
+        function onEquipmentTypeChange() {
+            var selectedType = document.getElementById("equipment-type").value;
+            var snDatalist = document.getElementById("sn-list");
+            snDatalist.innerHTML = "";
+
+            if (selectedType && config.serialNumbers[selectedType]) {
+                var suggestedSNs = config.serialNumbers[selectedType];
+                for (var i = 0; i < suggestedSNs.length; i++) {
+                    var option = document.createElement("option");
+                    option.value = suggestedSNs[i];
+                    snDatalist.appendChild(option);
+                }
+            }
+
+            var snRequiredStar = document.getElementById("sn-required-star");
+            var snInput = document.getElementById("serial-number");
+
+            if (selectedType === "Cabluri" || selectedType === "Accesorii") {
+                snRequiredStar.classList.add("hidden");
+                snInput.removeAttribute("required");
+                snInput.placeholder = "Scrie SN sau selectează (Opțional)...";
+            } else {
+                snRequiredStar.classList.remove("hidden");
+                snInput.setAttribute("required", "required");
+                snInput.placeholder = "Scrie SN sau selectează...";
+            }
+        }
+
+        // Populates locations datalist options
+        function populateLocationsDatalist() {
+            var locationDatalist = document.getElementById("location-list");
+            locationDatalist.innerHTML = "";
+            for (var i = 0; i < config.locations.length; i++) {
+                var option = document.createElement("option");
+                option.value = config.locations[i];
+                locationDatalist.appendChild(option);
+            }
+        }
+
+        // Render table
+        function renderRecords() {
+            var tbody = document.getElementById("records-tbody");
+            var emptyState = document.getElementById("empty-state");
+            var searchTerm = document.getElementById("search-input").value.toLowerCase();
+
+            tbody.innerHTML = "";
+
+            var filteredRecords = config.records.filter(function(rec) {
+                var desc = rec.description || "";
+                return rec.equipmentType.toLowerCase().indexOf(searchTerm) !== -1 ||
+                       rec.partNumber.toLowerCase().indexOf(searchTerm) !== -1 ||
+                       desc.toLowerCase().indexOf(searchTerm) !== -1 ||
+                       rec.serialNumber.toLowerCase().indexOf(searchTerm) !== -1 ||
+                       rec.location.toLowerCase().indexOf(searchTerm) !== -1;
+            });
+
+            if (filteredRecords.length === 0) {
+                emptyState.classList.remove("hidden");
+            } else {
+                emptyState.classList.add("hidden");
+            }
+
+            for (var i = 0; i < filteredRecords.length; i++) {
+                var rec = filteredRecords[i];
+                var row = document.createElement("tr");
+                row.className = "hover:bg-slate-50 transition border-b border-slate-100";
+
+                var indexCell = document.createElement("td");
+                indexCell.className = "px-4 sm:px-6 py-4 text-center font-bold text-slate-400";
+                indexCell.textContent = i + 1;
+                row.appendChild(indexCell);
+
+                var typeCell = document.createElement("td");
+                typeCell.className = "px-4 sm:px-6 py-4 font-semibold text-slate-900";
+                var badgeClass = "bg-slate-100 text-slate-800";
+                if (rec.equipmentType.indexOf("Matrix") !== -1) {
+                    badgeClass = "bg-indigo-50 text-indigo-700";
+                } else if (rec.equipmentType === "Thor") {
+                    badgeClass = "bg-emerald-50 text-emerald-700";
+                } else if (rec.equipmentType === "Blade") {
+                    badgeClass = "bg-amber-50 text-amber-700";
+                } else if (rec.equipmentType === "Accesorii") {
+                    badgeClass = "bg-purple-50 text-purple-700";
+                } else if (rec.equipmentType === "Cabluri") {
+                    badgeClass = "bg-sky-50 text-sky-700";
+                }
+                typeCell.innerHTML = '<span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-semibold ' + badgeClass + '">' + rec.equipmentType + '</span>';
+                row.appendChild(typeCell);
+
+                var pnCell = document.createElement("td");
+                pnCell.className = "px-4 sm:px-6 py-4 font-mono text-sm text-slate-700 tracking-tight";
+                pnCell.textContent = rec.partNumber;
+                row.appendChild(pnCell);
+
+                var descCell = document.createElement("td");
+                descCell.className = "px-4 sm:px-6 py-4 text-xs text-slate-600 max-w-xs truncate";
+                descCell.textContent = rec.description || "-";
+                row.appendChild(descCell);
+
+                var snCell = document.createElement("td");
+                snCell.className = "px-4 sm:px-6 py-4 font-mono text-sm font-semibold text-slate-900 tracking-tight";
+                snCell.textContent = rec.serialNumber || "N/A";
+                row.appendChild(snCell);
+
+                var locCell = document.createElement("td");
+                locCell.className = "px-4 sm:px-6 py-4 text-slate-600";
+                locCell.innerHTML = '<span class="inline-flex items-center space-x-1.5"><i class="fa-solid fa-location-dot text-slate-400"></i> <span>' + rec.location + '</span></span>';
+                row.appendChild(locCell);
+
+                var actionCell = document.createElement("td");
+                actionCell.className = "px-4 sm:px-6 py-4 text-center whitespace-nowrap space-x-2";
+                actionCell.innerHTML =
+                    '<button onclick="startEdit(' + rec.id + ')" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-indigo-600 cursor-pointer" title="Editează">' +
+                    '  <i class="fa-solid fa-pen text-xs"></i>' +
+                    '</button>' +
+                    '<button onclick="deleteRecord(' + rec.id + ')" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-rose-600 cursor-pointer" title="Șterge">' +
+                    '  <i class="fa-solid fa-trash-can text-xs"></i>' +
+                    '</button>';
+                row.appendChild(actionCell);
+
+                tbody.appendChild(row);
+            }
+
+            updateStatistics();
+        }
+
+        function updateStatistics() {
+            document.getElementById("stat-total-records").textContent = config.records.length;
+            var matrixCount = 0;
+            var uniqueLocations = {};
+            for (var i = 0; i < config.records.length; i++) {
+                if (config.records[i].equipmentType.indexOf("Matrix") !== -1) {
+                    matrixCount++;
+                }
+                uniqueLocations[config.records[i].location] = true;
+            }
+            document.getElementById("stat-matrix-scanners").textContent = matrixCount;
+            document.getElementById("stat-unique-locations").textContent = Object.keys(uniqueLocations).length;
+        }
+
+        // Add or Update from Form submit
+        function handleFormSubmit(event) {
+            event.preventDefault();
+
+            var editId = document.getElementById("edit-id").value;
+            var equipmentType = document.getElementById("equipment-type").value;
+            var partNumber = document.getElementById("part-number").value.trim();
+            var description = document.getElementById("description").value.trim();
+            var serialNumber = document.getElementById("serial-number").value.trim();
+            var location = document.getElementById("location").value.trim();
+
+            if (!equipmentType || !partNumber || !location) {
+                alert("Te rugăm să completezi toate câmpurile obligatorii.");
+                return;
+            }
+
+            if ((equipmentType === "Cabluri" || equipmentType === "Accesorii") && serialNumber === "") {
+                serialNumber = "N/A";
+            } else if (!serialNumber) {
+                alert("Te rugăm să completezi câmpul Serial Number.");
+                return;
+            }
+
+            if (config.locations.indexOf(location) === -1) {
+                config.locations.push(location);
+                populateLocationsDatalist();
+            }
+
+            if (!config.serialNumbers[equipmentType]) {
+                config.serialNumbers[equipmentType] = [];
+            }
+            if (serialNumber !== "N/A" && config.serialNumbers[equipmentType].indexOf(serialNumber) === -1) {
+                config.serialNumbers[equipmentType].push(serialNumber);
+            }
+
+            if (editId) {
+                var idNum = parseInt(editId, 10);
+                for (var i = 0; i < config.records.length; i++) {
+                    if (config.records[i].id === idNum) {
+                        config.records[i].equipmentType = equipmentType;
+                        config.records[i].partNumber = partNumber;
+                        config.records[i].description = description;
+                        config.records[i].serialNumber = serialNumber;
+                        config.records[i].location = location;
+                        break;
+                    }
+                }
+            } else {
+                var newId = config.records.length > 0 ? Math.max.apply(Math, config.records.map(function(o) { return o.id; })) + 1 : 1;
+                config.records.push({
+                    id: newId,
+                    equipmentType: equipmentType,
+                    partNumber: partNumber,
+                    description: description,
+                    serialNumber: serialNumber,
+                    location: location
+                });
+            }
+
+            resetForm();
+            renderRecords();
+            // Automatically queue update
+            localStorage.setItem("hosted_local_backup", JSON.stringify(config));
+        }
+
+        function startEdit(id) {
+            var target = null;
+            for (var i = 0; i < config.records.length; i++) {
+                if (config.records[i].id === id) {
+                    target = config.records[i];
+                    break;
+                }
+            }
+
+            if (!target) return;
+
+            document.getElementById("edit-id").value = target.id;
+            document.getElementById("record-idx").value = "Modifică înregistrarea: " + id;
+            document.getElementById("equipment-type").value = target.equipmentType;
+            document.getElementById("part-number").value = target.partNumber;
+            document.getElementById("description").value = target.description || "";
+            onEquipmentTypeChange();
+
+            if (target.serialNumber === "N/A" && (target.equipmentType === "Cabluri" || target.equipmentType === "Accesorii")) {
+                document.getElementById("serial-number").value = "";
+            } else {
+                document.getElementById("serial-number").value = target.serialNumber;
+            }
+
+            document.getElementById("location").value = target.location;
+
+            document.getElementById("form-title").innerHTML = '<i class="fa-solid fa-pen text-indigo-600"></i> Modifică Echipamentul';
+            document.getElementById("submit-btn-text").textContent = "Salvează modificările";
+            document.getElementById("btn-submit").className = "w-full inline-flex items-center justify-center space-x-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-indigo-700 focus:outline-none cursor-pointer";
+            document.getElementById("btn-cancel-edit").classList.remove("hidden");
+        }
+
+        function resetForm() {
+            document.getElementById("equipment-form").reset();
+            document.getElementById("edit-id").value = "";
+            document.getElementById("record-idx").value = "Auto-generat";
+            onEquipmentTypeChange();
+
+            document.getElementById("form-title").innerHTML = '<i class="fa-solid fa-circle-plus text-indigo-600"></i> Adăugare';
+            document.getElementById("submit-btn-text").textContent = "Adaugă în listă";
+            document.getElementById("btn-submit").className = "w-full inline-flex items-center justify-center space-x-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-slate-800 focus:outline-none cursor-pointer";
+            document.getElementById("btn-cancel-edit").classList.add("hidden");
+        }
+
+        function deleteRecord(id) {
+            if (confirm("Ești sigur că dorești să ștergi această înregistrare?")) {
+                config.records = config.records.filter(function(r) {
+                    return r.id !== id;
+                });
+                renderRecords();
+                localStorage.setItem("hosted_local_backup", JSON.stringify(config));
+            }
+        }
+    </script>
+</body>
+</html>
