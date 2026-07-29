@@ -1,41 +1,41 @@
-# Gid de Găzduire a Configuratorului pe Cloudflare Pages și Cloudflare Workers KV
+# Cloudflare Deployment & Hosting Guide
 
-Acest ghid îți arată pas cu pas cum să găzduiești **Configuratorul de Echipamente Industriale (v1.1.0)** pe **Cloudflare** în mod complet gratuit, permițând salvarea datelor într-un JSON securizat extern.
+This guide explains how to host your **Industrial Equipment Configurator (v1.2.0)** on **Cloudflare** for free, with an external JSON database.
 
-Sistemul va fi compus din două părți:
-1. **Frontend-ul (Aplicația Web):** Găzduit gratuit pe **Cloudflare Pages**.
-2. **Backend-ul (API-ul de salvare):** Găzduit pe un **Cloudflare Worker** cu baza de date persistenta stocată în **Cloudflare KV (Key-Value) Storage**.
+The architecture consists of:
+1. **Frontend Application:** Hosted for free on **Cloudflare Pages**.
+2. **REST API backend:** Hosted on **Cloudflare Workers** with persistent storage in **Cloudflare KV (Key-Value) Storage**.
 
 ---
 
-## Partea 1: Crearea și Găzduirea bazei de date (Cloudflare Workers + KV)
+## Part 1: Setting up the Database (Cloudflare Workers + KV)
 
-### Pasul 1: Creează un cont Cloudflare
-Dacă nu ai deja un cont, intră pe [dash.cloudflare.com](https://dash.cloudflare.com/) și înregistrează-te gratuit.
+### Step 1: Create a Cloudflare Account
+If you do not have one, register for free at [dash.cloudflare.com](https://dash.cloudflare.com/).
 
-### Pasul 2: Creează un Namespace KV (Baza ta de Date JSON)
-1. În panoul de control Cloudflare, accesează meniul din stânga: **Workers & Pages** -> **KV**.
-2. Apasă pe **Create Namespace**.
-3. Pune-i numele: `CONFIG_STORE` și apasă **Add**.
+### Step 2: Create a KV Namespace (Your JSON database)
+1. In your Cloudflare dashboard, go to the left sidebar: **Workers & Pages** -> **KV**.
+2. Click **Create Namespace**.
+3. Set the name to `CONFIG_STORE` and click **Add**.
 
-### Pasul 3: Creează un Cloudflare Worker pentru API
-1. Navighează la **Workers & Pages** -> **Overview** și apasă pe **Create Application**.
-2. Selectează **Create Worker**, pune-i numele (de exemplu: `config-api`) și apasă pe **Deploy**.
-3. După deploy, apasă pe **Edit Code** (sau intri pe Worker și mergi la fila *Quick Edit*).
-4. Înlocuiește codul implicit cu următorul script de API securizat și flexibil:
+### Step 3: Create a Cloudflare Worker API
+1. Navigate to **Workers & Pages** -> **Overview** and click **Create Application**.
+2. Select **Create Worker**, name it (e.g., `config-api`), and click **Deploy**.
+3. After deployment, click **Edit Code** (or open the Worker and go to the *Quick Edit* tab).
+4. Replace the default template with the following secured REST API script:
 
 ```javascript
-// Cloudflare Worker API pentru Configuratorul de Echipamente (v1.1.0)
-// Permite operatii GET si POST securizate
+// Cloudflare Worker API for Equipment Configurator (v1.2.0)
+// Supports secured CORS-friendly GET and POST operations
 
-const SECURITY_KEY = "ParolaTaSecretaDeAcces"; // Schimbă această cheie pentru securitate
+const SECURITY_KEY = "YourSecretPasswordHere"; // Change this key for security
 
 addEventListener("fetch", event => {
   event.respondWith(handleRequest(event.request));
 });
 
 async function handleRequest(request) {
-  // Gestionare cereri CORS (Cross-Origin Resource Sharing)
+  // CORS Headers Configuration
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
@@ -47,12 +47,12 @@ async function handleRequest(request) {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Verificare Autorizare (Opțional)
+  // Security authorization verification
   const authHeader = request.headers.get("Authorization") || "";
   const token = authHeader.replace("Bearer ", "").trim();
 
   if (SECURITY_KEY && token !== SECURITY_KEY && request.method === "POST") {
-    return new Response(JSON.stringify({ error: "Neautorizat! Cheie incorectă." }), {
+    return new Response(JSON.stringify({ error: "Unauthorized! Token is invalid." }), {
       status: 401,
       headers: { ...corsHeaders, "Content-Type": "application/json" }
     });
@@ -60,11 +60,11 @@ async function handleRequest(request) {
 
   try {
     if (request.method === "GET") {
-      // Citire date din KV Storage (cheia "equipment_config")
+      // Read config data from KV storage (key "equipment_config")
       const data = await CONFIG_STORE.get("equipment_config");
 
       if (!data) {
-        // Dacă baza de date este goală, returnează un template de pornire
+        // Fallback default template if store is empty
         return new Response(JSON.stringify({
           serialNumbers: { Blade: [], "Matrix 120": [], "Matrix 220": [], "Matrix 320 2MPx": [], "Matrix 320 5MPx": [], Thor: [], Accesorii: [], Cabluri: [] },
           locations: [],
@@ -81,20 +81,20 @@ async function handleRequest(request) {
     }
 
     if (request.method === "POST") {
-      // Salvare date în KV Storage
+      // Store new config data in KV Storage
       const body = await request.text();
 
-      // Validează dacă datele primite sunt JSON valid înainte de a le stoca
+      // Validate incoming data format
       JSON.parse(body);
 
       await CONFIG_STORE.put("equipment_config", body);
 
-      return new Response(JSON.stringify({ success: true, message: "Datele au fost sincronizate!" }), {
+      return new Response(JSON.stringify({ success: true, message: "Data successfully synchronized!" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
     }
 
-    return new Response("Metodă nesuportată", { status: 405 });
+    return new Response("Method Not Allowed", { status: 405 });
   } catch (err) {
     return new Response(JSON.stringify({ error: err.message }), {
       status: 500,
@@ -104,42 +104,41 @@ async function handleRequest(request) {
 }
 ```
 
-5. Apasă pe **Save and Deploy**.
+5. Click **Save and Deploy**.
 
-### Pasul 4: Leagă Namespace-ul KV la Worker
-Pentru ca Worker-ul să poată citi și scrie în baza de date KV:
-1. În pagina Worker-ului tău (`config-api`), mergi la fila **Settings** -> **Variables**.
-2. Derulează în jos până la secțiunea **KV Namespace Bindings** și apasă **Add binding**.
-3. Pune-i Variable name (numele variabilei utilizate în cod): `CONFIG_STORE`
-4. Selectează din lista dropdown Namespace-ul KV pe care l-ai creat la Pasul 2 (`CONFIG_STORE`).
-5. Apasă pe **Save** și apoi faceți un **Redeploy** al Worker-ului (dacă vi se solicită).
+### Step 4: Bind your KV Namespace to the Worker
+1. Inside your Worker panel (`config-api`), navigate to **Settings** -> **Variables**.
+2. Scroll to **KV Namespace Bindings** and click **Add binding**.
+3. Set the Variable name to: `CONFIG_STORE`
+4. Select the Namespace you created in Step 2 (`CONFIG_STORE`).
+5. Click **Save** and perform a **Redeploy** of the worker.
 
-*Acum API-ul tău este live la o adresă de forma:* `https://config-api.subdomeniu.workers.dev`
-
----
-
-## Partea 2: Găzduirea Interfeței Web (Cloudflare Pages)
-
-### Pasul 1: Creează fișierul de deployment
-1. Redenumește sau copiază fișierul `configurator_hosted.html` ca `index.html` într-un folder gol pe calculatorul tău.
-
-### Pasul 2: Încarcă-l în Cloudflare Pages
-1. În contul tău Cloudflare, mergi la **Workers & Pages** -> **Overview** -> apasă **Create Application**.
-2. Selectează fila **Pages** de sus, apoi alege **Upload assets**.
-3. Pune-i proiectului un nume (ex: `configurator-echipamente`).
-4. Trage folderul în care ai salvat fișierul `index.html` (sau încarcă-l direct).
-5. Apasă pe **Upload assets** și apoi pe **Deploy site**.
-
-*Interfața ta web este live la o adresă de forma:* `https://configurator-echipamente.pages.dev`
+*Your secure REST API is now live at:* `https://config-api.subdomain.workers.dev`
 
 ---
 
-## Partea 3: Conectarea Aplicației la Baza de Date
+## Part 2: Hosting the Frontend (Cloudflare Pages)
 
-1. Deschide adresa site-ului tău (găzduit pe Cloudflare Pages).
-2. Apasă pe rotița de **Setări** (icoana gri <i class="fa-solid fa-gear"></i>) din colțul din dreapta sus.
-3. Introdu URL-ul API-ului tău din Partea 1 (ex: `https://config-api.subdomeniu.workers.dev`).
-4. Introdu Cheia de Securitate setată în codul Worker-ului (`ParolaTaSecretaDeAcces`).
-5. Apasă pe **Salvează setările**.
+### Step 1: Prepare assets
+1. Rename or copy `configurator_hosted.html` as `index.html` inside a blank folder on your computer.
 
-Gata! Sistemul tău este acum complet operațional, modern și securizat. Toate editările, adăugările și ștergerile se vor salva instantaneu în baza de date din cloud la apăsarea butonului **Salvează Config**.
+### Step 2: Upload to Cloudflare Pages
+1. In the Cloudflare dashboard, go to **Workers & Pages** -> **Overview** -> **Create Application**.
+2. Select the **Pages** tab and click **Upload assets**.
+3. Name your project (e.g., `equipment-configurator`).
+4. Drag and drop the folder containing your `index.html` file.
+5. Click **Upload assets** and then **Deploy site**.
+
+*Your web application frontend is now live at:* `https://equipment-configurator.pages.dev`
+
+---
+
+## Part 3: Connect Frontend to Backend API
+
+1. Open your published website on Cloudflare Pages.
+2. Click the gear icon (<i class="fa-solid fa-gear"></i>) in the top-right corner.
+3. Paste your Cloud API Worker URL (e.g., `https://config-api.subdomain.workers.dev`).
+4. Enter the matching security password (`YourSecretPasswordHere`).
+5. Click **Save Settings**.
+
+Your Cloud-supported system is fully connected, mobile-friendly, localized in English, and supports high-volume spreadsheet importing with duplicate error detection!

@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html lang="ro">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurator Echipamente Industriale v1.1.0 (Cloud Hosted)</title>
+    <title>Industrial Equipment Configurator v1.2.0 (Cloud Hosted)</title>
     <!-- Tailwind CSS CDN for a modern, responsive interface -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome for beautiful modern icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SheetJS (xlsx) for importing Excel files in-browser -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -26,26 +28,26 @@
             </div>
             <div class="min-w-0">
                 <div class="flex items-center space-x-2">
-                    <h1 class="text-sm sm:text-base font-bold tracking-tight text-slate-900 truncate">Configurator Cloud</h1>
-                    <span class="inline-flex items-center rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-700/10 flex-shrink-0">v1.1.0</span>
+                    <h1 class="text-sm sm:text-base font-bold tracking-tight text-slate-900 truncate">Equipment Configurator</h1>
+                    <span class="inline-flex items-center rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-700/10 flex-shrink-0">v1.2.0</span>
                 </div>
-                <p class="hidden sm:block text-xs font-medium text-slate-500">Gestiune sincronizată prin Cloud / LocalStorage</p>
+                <p class="hidden sm:block text-xs font-medium text-slate-500">Cloud Synchronized / LocalStorage Management</p>
             </div>
         </div>
         <div class="flex items-center space-x-2 sm:space-x-4">
             <!-- Connection Status Badge -->
             <span id="sync-status" class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2 py-1 text-xs font-medium text-amber-800 ring-1 ring-inset ring-amber-600/20">
                 <span class="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                <span>Mod Local (Offline)</span>
+                <span>Local Mode (Offline)</span>
             </span>
             <!-- Settings Modal Button -->
-            <button onclick="toggleSettingsModal(true)" class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm hover:bg-slate-50 cursor-pointer" title="Configurare API Cloud">
+            <button onclick="toggleSettingsModal(true)" class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm hover:bg-slate-50 cursor-pointer" title="Cloud API Setup">
                 <i class="fa-solid fa-gear"></i>
             </button>
             <!-- Sync/Save Button -->
             <button onclick="saveConfiguration()" class="inline-flex items-center space-x-1.5 sm:space-x-2 rounded-xl bg-indigo-600 px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-indigo-100 transition hover:bg-indigo-700 hover:shadow-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 cursor-pointer">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
-                <span>Salvează Config</span>
+                <span>Save Config</span>
             </button>
         </div>
     </header>
@@ -56,9 +58,9 @@
         <div id="api-alert-banner" class="mb-6 rounded-xl border border-blue-100 bg-blue-50/50 p-4 text-xs text-blue-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
             <span class="flex items-center gap-2">
                 <i class="fa-solid fa-circle-info text-blue-500 text-sm"></i>
-                <span>Aplicația rulează momentan în modul **LocalStorage**. Pentru a sincroniza datele în timp real între multiple dispozitive, asociați un API extern de Cloudflare din setări.</span>
+                <span>The app is currently running in **LocalStorage** mode. To sync data in real-time across devices, connect your Cloudflare API in settings.</span>
             </span>
-            <button onclick="toggleSettingsModal(true)" class="font-bold underline uppercase tracking-wider hover:text-blue-800 cursor-pointer">Setați URL API</button>
+            <button onclick="toggleSettingsModal(true)" class="font-bold underline uppercase tracking-wider hover:text-blue-800 cursor-pointer">Configure API URL</button>
         </div>
 
         <!-- Quick stats cards -->
@@ -68,7 +70,7 @@
                     <i class="fa-solid fa-list-ol text-lg sm:text-xl"></i>
                 </div>
                 <div>
-                    <p class="text-xs sm:text-sm font-medium text-slate-500">Total Înregistrări</p>
+                    <p class="text-xs sm:text-sm font-medium text-slate-500">Total Records</p>
                     <p id="stat-total-records" class="text-xl sm:text-2xl font-bold text-slate-900">0</p>
                 </div>
             </div>
@@ -77,7 +79,7 @@
                     <i class="fa-solid fa-barcode text-lg sm:text-xl"></i>
                 </div>
                 <div>
-                    <p class="text-xs sm:text-sm font-medium text-slate-500">Scannere Matrix active</p>
+                    <p class="text-xs sm:text-sm font-medium text-slate-500">Active Matrix Scanners</p>
                     <p id="stat-matrix-scanners" class="text-xl sm:text-2xl font-bold text-slate-900">0</p>
                 </div>
             </div>
@@ -86,7 +88,7 @@
                     <i class="fa-solid fa-location-dot text-lg sm:text-xl"></i>
                 </div>
                 <div>
-                    <p class="text-xs sm:text-sm font-medium text-slate-500">Locații Utilizate</p>
+                    <p class="text-xs sm:text-sm font-medium text-slate-500">Locations in Use</p>
                     <p id="stat-unique-locations" class="text-xl sm:text-2xl font-bold text-slate-900">0</p>
                 </div>
             </div>
@@ -94,33 +96,34 @@
 
         <div class="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-4">
 
-            <!-- Left Side: Add/Edit Form -->
-            <div class="lg:col-span-1">
+            <!-- Left Side: Add/Edit Form & Excel Import -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Add/Edit Card -->
                 <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
                     <div class="mb-5 flex items-center justify-between border-b border-slate-100 pb-3">
                         <h2 id="form-title" class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
                             <i class="fa-solid fa-circle-plus text-indigo-600"></i>
-                            <span>Adăugare</span>
+                            <span>Add Equipment</span>
                         </h2>
                         <button id="btn-cancel-edit" onclick="resetForm()" class="hidden text-xs font-semibold text-rose-500 hover:text-rose-600 transition">
-                            Anulează
+                            Cancel
                         </button>
                     </div>
 
                     <form id="equipment-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
                         <input type="hidden" id="edit-id" value="">
 
-                        <!-- Nr Curent -->
+                        <!-- Record Index -->
                         <div>
-                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Număr Curent</label>
-                            <input type="text" id="record-idx" class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-500 focus:outline-none" value="Auto-generat" readonly>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Record ID</label>
+                            <input type="text" id="record-idx" class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-500 focus:outline-none" value="Auto-generated" readonly>
                         </div>
 
-                        <!-- Tip Echipament -->
+                        <!-- Equipment Type -->
                         <div>
-                            <label for="equipment-type" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Tip Echipament <span class="text-rose-500">*</span></label>
+                            <label for="equipment-type" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Equipment Type <span class="text-rose-500">*</span></label>
                             <select id="equipment-type" onchange="onEquipmentTypeChange()" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100 cursor-pointer" required>
-                                <option value="" disabled selected>Selectează tipul...</option>
+                                <option value="" disabled selected>Select type...</option>
                                 <option value="Blade">Blade</option>
                                 <option value="Matrix 120">Matrix 120</option>
                                 <option value="Matrix 220">Matrix 220</option>
@@ -138,27 +141,27 @@
                             <input type="text" id="part-number" placeholder="Ex: 937900120" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100" required>
                         </div>
 
-                        <!-- Descriere -->
+                        <!-- Description -->
                         <div>
-                            <label for="description" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Descriere</label>
-                            <input type="text" id="description" placeholder="Ex: Cablu alimentare M12..." class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100">
+                            <label for="description" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Description</label>
+                            <input type="text" id="description" placeholder="Ex: M12 Power Cable..." class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100">
                         </div>
 
                         <!-- Serial Number -->
                         <div>
                             <label for="serial-number" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Serial Number (SN) <span id="sn-required-star" class="text-rose-500">*</span></label>
                             <div class="relative">
-                                <input type="text" id="serial-number" list="sn-list" placeholder="Scrie SN sau selectează..." class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100" required>
+                                <input type="text" id="serial-number" list="sn-list" placeholder="Enter SN or choose..." class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100" required>
                                 <datalist id="sn-list">
                                 </datalist>
                             </div>
                         </div>
 
-                        <!-- Locatie -->
+                        <!-- Location -->
                         <div>
-                            <label for="location" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Locație <span class="text-rose-500">*</span></label>
+                            <label for="location" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Location <span class="text-rose-500">*</span></label>
                             <div class="relative">
-                                <input type="text" id="location" list="location-list" placeholder="Scrie locația..." class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100" required>
+                                <input type="text" id="location" list="location-list" placeholder="Enter location..." class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100" required>
                                 <datalist id="location-list">
                                 </datalist>
                             </div>
@@ -166,38 +169,64 @@
 
                         <button type="submit" id="btn-submit" class="w-full inline-flex items-center justify-center space-x-1.5 rounded-lg bg-slate-900 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none cursor-pointer">
                             <i class="fa-solid fa-plus-circle"></i>
-                            <span id="submit-btn-text">Adaugă în listă</span>
+                            <span id="submit-btn-text">Add to List</span>
                         </button>
                     </form>
                 </div>
+
+                <!-- Excel Import Card -->
+                <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+                    <div class="mb-4 flex items-center gap-1.5 border-b border-slate-100 pb-3">
+                        <i class="fa-solid fa-file-excel text-emerald-600"></i>
+                        <h2 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Excel Import (XLS / XLSX)</h2>
+                    </div>
+                    <div class="space-y-3">
+                        <p class="text-[11px] text-slate-500 leading-relaxed">
+                            Upload an Excel spreadsheet with the columns:
+                            <strong class="font-semibold block text-slate-700">Part Number, Description, Serial Number, Location</strong>
+                            Optionally include <strong class="font-semibold text-slate-700">Equipment Type</strong> (defaults to 'Blade' if empty).
+                        </p>
+                        <div class="relative flex items-center justify-center w-full">
+                            <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-indigo-500 transition">
+                                <div class="flex flex-col items-center justify-center pt-3 pb-4">
+                                    <i class="fa-solid fa-cloud-arrow-up text-lg text-slate-400 mb-1"></i>
+                                    <p class="text-[11px] text-slate-500 font-semibold">Choose Excel File</p>
+                                    <p class="text-[9px] text-slate-400">XLS, XLSX up to 10MB</p>
+                                </div>
+                                <input type="file" id="excel-file-input" class="hidden" accept=".xlsx, .xls" onchange="handleExcelImport(event)" />
+                            </label>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Right Side: Configured Devices Table -->
+            <!-- Right Side: Configured Devices Table (Scrollable & Responsive) -->
             <div class="lg:col-span-3">
                 <div class="rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 bg-slate-50/50 p-4 sm:p-6 gap-4">
                         <div>
-                            <h2 class="text-base font-bold text-slate-900">Echipamente Configurate</h2>
-                            <p class="text-xs text-slate-500">Sincronizate din baza de date centrală JSON / LocalStorage</p>
+                            <h2 class="text-base font-bold text-slate-900">Configured Equipment</h2>
+                            <p class="text-xs text-slate-500">Current equipment records stored in Central database / LocalStorage</p>
                         </div>
                         <!-- Search Bar -->
                         <div class="relative max-w-xs w-full">
                             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                            <input type="text" id="search-input" oninput="renderRecords()" placeholder="Caută echipament..." class="w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100">
+                            <input type="text" id="search-input" oninput="renderRecords()" placeholder="Search equipment..." class="w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 py-2 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100">
                         </div>
                     </div>
 
+                    <!-- Responsive Table Wrapper -->
                     <div class="w-full overflow-x-auto">
                         <table class="w-full min-w-[700px] border-collapse text-left text-sm text-slate-600">
                             <thead class="bg-slate-50/75 border-b border-slate-100 text-xs font-bold uppercase tracking-wider text-slate-500">
                                 <tr>
-                                    <th class="px-4 sm:px-6 py-4 font-bold text-center w-14">Nr. Crt</th>
-                                    <th class="px-4 sm:px-6 py-4">Tip Echipament</th>
+                                    <th class="px-4 sm:px-6 py-4 font-bold text-center w-14">No.</th>
+                                    <th class="px-4 sm:px-6 py-4">Equipment Type</th>
                                     <th class="px-4 sm:px-6 py-4">Part Number (PN)</th>
-                                    <th class="px-4 sm:px-6 py-4">Descriere</th>
+                                    <th class="px-4 sm:px-6 py-4">Description</th>
                                     <th class="px-4 sm:px-6 py-4">Serial Number (SN)</th>
-                                    <th class="px-4 sm:px-6 py-4">Locație</th>
-                                    <th class="px-4 sm:px-6 py-4 text-center w-28">Acțiuni</th>
+                                    <th class="px-4 sm:px-6 py-4">Location</th>
+                                    <th class="px-4 sm:px-6 py-4 text-center w-28">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="records-tbody" class="divide-y divide-slate-100">
@@ -210,8 +239,8 @@
                         <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-400 mb-4">
                             <i class="fa-solid fa-box-open text-2xl"></i>
                         </div>
-                        <h3 class="text-sm font-bold text-slate-900">Nu există echipamente</h3>
-                        <p class="text-xs text-slate-500 mt-1">Introduceți datele în formularul din stânga pentru a adăuga primul dispozitiv.</p>
+                        <h3 class="text-sm font-bold text-slate-900">No equipment found</h3>
+                        <p class="text-xs text-slate-500 mt-1">Enter details on the left form or upload an Excel file to get started.</p>
                     </div>
                 </div>
             </div>
@@ -227,24 +256,24 @@
             </button>
             <h3 class="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
                 <i class="fa-solid fa-gears text-indigo-600"></i>
-                <span>Setări Conexiune Cloud (Cloudflare)</span>
+                <span>Cloud Connection Settings</span>
             </h3>
-            <p class="text-xs text-slate-500 mb-4">Introduceți adresa URL a API-ului dumneavoastră extern Cloudflare Worker pentru a citi și salva automat datele în cloud.</p>
+            <p class="text-xs text-slate-500 mb-4">Provide the URL for your external Cloudflare Worker API to read and save data in the cloud.</p>
 
             <div class="space-y-4">
                 <div>
-                    <label for="settings-api-url" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">URL API Cloud</label>
-                    <input type="url" id="settings-api-url" placeholder="https://config-api.nume.workers.dev" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm focus:border-indigo-500 focus:outline-none">
+                    <label for="settings-api-url" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Cloud API URL</label>
+                    <input type="url" id="settings-api-url" placeholder="https://config-api.name.workers.dev" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm focus:border-indigo-500 focus:outline-none">
                 </div>
                 <div>
-                    <label for="settings-api-key" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Cheie de Securitate (Opțional)</label>
-                    <input type="password" id="settings-api-key" placeholder="Parolă de acces API" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm focus:border-indigo-500 focus:outline-none">
+                    <label for="settings-api-key" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Security Key / Password (Optional)</label>
+                    <input type="password" id="settings-api-key" placeholder="API Access Password" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-sm focus:border-indigo-500 focus:outline-none">
                 </div>
             </div>
 
             <div class="mt-6 flex items-center justify-end space-x-3">
-                <button onclick="toggleSettingsModal(false)" class="px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-700 cursor-pointer">Anulează</button>
-                <button onclick="saveSettings()" class="px-4 py-2 rounded-lg bg-indigo-600 text-xs font-semibold text-white shadow-md hover:bg-indigo-700 cursor-pointer">Salvează setările</button>
+                <button onclick="toggleSettingsModal(false)" class="px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-700 cursor-pointer">Cancel</button>
+                <button onclick="saveSettings()" class="px-4 py-2 rounded-lg bg-indigo-600 text-xs font-semibold text-white shadow-md hover:bg-indigo-700 cursor-pointer">Save Settings</button>
             </div>
         </div>
     </div>
@@ -270,7 +299,7 @@
                     "id": 1,
                     "equipmentType": "Matrix 320 5MPx",
                     "partNumber": "937900120",
-                    "description": "Scanner principal linie asamblare",
+                    "description": "Primary assembly line scanner",
                     "serialNumber": "M320_5M-5511",
                     "location": "Zona B - Sortare"
                 }
@@ -327,7 +356,7 @@
             var apiUrl = localStorage.getItem("hosted_api_url");
             var apiKey = localStorage.getItem("hosted_api_key");
 
-            setSyncStatus("loading", "Sincronizare...");
+            setSyncStatus("loading", "Synchronizing...");
 
             if (apiUrl) {
                 // Cloud Sync logic
@@ -344,19 +373,19 @@
                 .then(function(data) {
                     config = data;
                     localStorage.setItem("hosted_local_backup", JSON.stringify(data));
-                    setSyncStatus("cloud", "Conectat la Cloud");
+                    setSyncStatus("cloud", "Connected to Cloud");
                     populateLocationsDatalist();
                     onEquipmentTypeChange();
                     renderRecords();
                 })
                 .catch(function(err) {
                     console.error("Fetch failed. Loading backup", err);
-                    setSyncStatus("offline", "Eroare Cloud (Mod Offline)");
+                    setSyncStatus("offline", "Cloud Error (Offline Mode)");
                     loadLocalData();
                 });
             } else {
                 // Local only fallback
-                setSyncStatus("offline", "Mod Local (Offline)");
+                setSyncStatus("offline", "Local Mode (Offline)");
                 loadLocalData();
             }
         }
@@ -387,7 +416,7 @@
             localStorage.setItem("hosted_local_backup", JSON.stringify(config));
 
             if (apiUrl) {
-                setSyncStatus("loading", "Se salvează în Cloud...");
+                setSyncStatus("loading", "Saving to Cloud...");
 
                 var headers = { "Content-Type": "application/json" };
                 if (apiKey) {
@@ -401,17 +430,17 @@
                 })
                 .then(function(res) {
                     if (!res.ok) throw new Error("HTTP error " + res.status);
-                    setSyncStatus("cloud", "Salvat în Cloud");
-                    alert("Datele au fost sincronizate cu succes în Cloudflare!");
+                    setSyncStatus("cloud", "Saved in Cloud");
+                    alert("Configuration synchronized successfully to Cloudflare!");
                 })
                 .catch(function(err) {
                     console.error("Save to cloud failed", err);
-                    setSyncStatus("offline", "Eroare salvare Cloud");
-                    alert("Salvare în cloud eșuată! Configurația a fost stocată local în browser.");
+                    setSyncStatus("offline", "Cloud Saving Error");
+                    alert("Cloud sync failed! Configuration was backed up locally in your browser.");
                 });
             } else {
-                setSyncStatus("offline", "Salvat Local (Offline)");
-                alert("Configurația a fost salvată local în browser (LocalStorage).");
+                setSyncStatus("offline", "Saved Locally (Offline)");
+                alert("Configuration saved locally in browser (LocalStorage).");
             }
         }
 
@@ -455,11 +484,11 @@
             if (selectedType === "Cabluri" || selectedType === "Accesorii") {
                 snRequiredStar.classList.add("hidden");
                 snInput.removeAttribute("required");
-                snInput.placeholder = "Scrie SN sau selectează (Opțional)...";
+                snInput.placeholder = "Enter SN or choose (Optional)...";
             } else {
                 snRequiredStar.classList.remove("hidden");
                 snInput.setAttribute("required", "required");
-                snInput.placeholder = "Scrie SN sau selectează...";
+                snInput.placeholder = "Enter SN or choose...";
             }
         }
 
@@ -547,10 +576,10 @@
                 var actionCell = document.createElement("td");
                 actionCell.className = "px-4 sm:px-6 py-4 text-center whitespace-nowrap space-x-2";
                 actionCell.innerHTML =
-                    '<button onclick="startEdit(' + rec.id + ')" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-indigo-600 cursor-pointer" title="Editează">' +
+                    '<button onclick="startEdit(' + rec.id + ')" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-indigo-600 cursor-pointer" title="Edit">' +
                     '  <i class="fa-solid fa-pen text-xs"></i>' +
                     '</button>' +
-                    '<button onclick="deleteRecord(' + rec.id + ')" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-rose-600 cursor-pointer" title="Șterge">' +
+                    '<button onclick="deleteRecord(' + rec.id + ')" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-rose-600 cursor-pointer" title="Delete">' +
                     '  <i class="fa-solid fa-trash-can text-xs"></i>' +
                     '</button>';
                 row.appendChild(actionCell);
@@ -587,15 +616,32 @@
             var location = document.getElementById("location").value.trim();
 
             if (!equipmentType || !partNumber || !location) {
-                alert("Te rugăm să completezi toate câmpurile obligatorii.");
+                alert("Please fill in all mandatory fields.");
                 return;
             }
 
             if ((equipmentType === "Cabluri" || equipmentType === "Accesorii") && serialNumber === "") {
                 serialNumber = "N/A";
             } else if (!serialNumber) {
-                alert("Te rugăm să completezi câmpul Serial Number.");
+                alert("Please fill in the Serial Number.");
                 return;
+            }
+
+            // Duplicate checks on serial numbers (excluding Accesorii and Cabluri)
+            if (serialNumber !== "N/A" && equipmentType !== "Accesorii" && equipmentType !== "Cabluri") {
+                var duplicate = config.records.find(function(r) {
+                    return r.serialNumber.toLowerCase() === serialNumber.toLowerCase() && r.id !== parseInt(editId, 10);
+                });
+                if (duplicate) {
+                    var overwrite = confirm("Duplicate serial number '" + serialNumber + "' detected for existing equipment '" + duplicate.equipmentType + "'!\n\nClick OK to OVERWRITE this record, or Cancel to ignore and abort.");
+                    if (!overwrite) {
+                        return; // Ignore / Abort
+                    }
+                    // Overwrite the existing duplicate record directly (deleting it first so we can save our edit/new one)
+                    config.records = config.records.filter(function(r) {
+                        return r.id !== duplicate.id;
+                    });
+                }
             }
 
             if (config.locations.indexOf(location) === -1) {
@@ -636,7 +682,6 @@
 
             resetForm();
             renderRecords();
-            // Automatically queue update
             localStorage.setItem("hosted_local_backup", JSON.stringify(config));
         }
 
@@ -652,7 +697,7 @@
             if (!target) return;
 
             document.getElementById("edit-id").value = target.id;
-            document.getElementById("record-idx").value = "Modifică înregistrarea: " + id;
+            document.getElementById("record-idx").value = "Modify record: " + id;
             document.getElementById("equipment-type").value = target.equipmentType;
             document.getElementById("part-number").value = target.partNumber;
             document.getElementById("description").value = target.description || "";
@@ -666,8 +711,8 @@
 
             document.getElementById("location").value = target.location;
 
-            document.getElementById("form-title").innerHTML = '<i class="fa-solid fa-pen text-indigo-600"></i> Modifică Echipamentul';
-            document.getElementById("submit-btn-text").textContent = "Salvează modificările";
+            document.getElementById("form-title").innerHTML = '<i class="fa-solid fa-pen text-indigo-600"></i> Edit Equipment';
+            document.getElementById("submit-btn-text").textContent = "Save Changes";
             document.getElementById("btn-submit").className = "w-full inline-flex items-center justify-center space-x-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-indigo-700 focus:outline-none cursor-pointer";
             document.getElementById("btn-cancel-edit").classList.remove("hidden");
         }
@@ -675,23 +720,181 @@
         function resetForm() {
             document.getElementById("equipment-form").reset();
             document.getElementById("edit-id").value = "";
-            document.getElementById("record-idx").value = "Auto-generat";
+            document.getElementById("record-idx").value = "Auto-generated";
             onEquipmentTypeChange();
 
-            document.getElementById("form-title").innerHTML = '<i class="fa-solid fa-circle-plus text-indigo-600"></i> Adăugare';
-            document.getElementById("submit-btn-text").textContent = "Adaugă în listă";
+            document.getElementById("form-title").innerHTML = '<i class="fa-solid fa-circle-plus text-indigo-600"></i> Add Equipment';
+            document.getElementById("submit-btn-text").textContent = "Add to List";
             document.getElementById("btn-submit").className = "w-full inline-flex items-center justify-center space-x-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-slate-800 focus:outline-none cursor-pointer";
             document.getElementById("btn-cancel-edit").classList.add("hidden");
         }
 
         function deleteRecord(id) {
-            if (confirm("Ești sigur că dorești să ștergi această înregistrare?")) {
+            if (confirm("Are you sure you want to delete this record?")) {
                 config.records = config.records.filter(function(r) {
                     return r.id !== id;
                 });
                 renderRecords();
                 localStorage.setItem("hosted_local_backup", JSON.stringify(config));
             }
+        }
+
+        // Excel file import parsing and mapping with duplicates detection
+        function handleExcelImport(event) {
+            var file = event.target.files[0];
+            if (!file) return;
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    var data = new Uint8Array(e.target.result);
+                    var workbook = XLSX.read(data, { type: 'array' });
+
+                    // Read the very first sheet
+                    var firstSheetName = workbook.SheetNames[0];
+                    var worksheet = workbook.Sheets[firstSheetName];
+
+                    // Convert raw cells to array of arrays or raw row objects
+                    var rawRows = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+
+                    if (rawRows.length === 0) {
+                        alert("Excel file is empty!");
+                        return;
+                    }
+
+                    var addedCount = 0;
+                    var overwrittenCount = 0;
+                    var skippedCount = 0;
+
+                    for (var i = 0; i < rawRows.length; i++) {
+                        var row = rawRows[i];
+
+                        // Flexible, case-insensitive column mapping
+                        var partNumber = getObjectValueCaseInsensitive(row, ["Part Number", "PN", "PartNo", "Cod Part"]);
+                        var description = getObjectValueCaseInsensitive(row, ["Description", "Descriere", "Desc"]);
+                        var serialNumber = getObjectValueCaseInsensitive(row, ["Serial Number", "SN", "SerialNo", "Serie"]);
+                        var location = getObjectValueCaseInsensitive(row, ["Location", "Locatie", "Loc"]);
+                        var equipmentType = getObjectValueCaseInsensitive(row, ["Equipment Type", "Type", "Echipament", "Tip"]);
+
+                        // Clean data
+                        partNumber = String(partNumber).trim();
+                        description = String(description).trim();
+                        serialNumber = String(serialNumber).trim();
+                        location = String(location).trim();
+                        equipmentType = String(equipmentType).trim();
+
+                        // Require at least Part Number and Location to be valid
+                        if (!partNumber || !location) {
+                            skippedCount++;
+                            continue;
+                        }
+
+                        // Default Equipment Type logic
+                        if (!equipmentType) {
+                            // Deduce from values or default to Blade
+                            if (serialNumber === "" || serialNumber.toLowerCase() === "n/a") {
+                                equipmentType = "Accesorii";
+                            } else {
+                                equipmentType = "Blade";
+                            }
+                        } else {
+                            // Match with our known list or insert dynamically
+                            var matchedType = config.equipmentTypes.find(function(t) {
+                                return t.toLowerCase() === equipmentType.toLowerCase();
+                            });
+                            if (matchedType) {
+                                equipmentType = matchedType;
+                            } else {
+                                config.equipmentTypes.push(equipmentType);
+                                config.serialNumbers[equipmentType] = [];
+                            }
+                        }
+
+                        // For Cabluri and Accesorii, if empty set N/A
+                        if ((equipmentType === "Cabluri" || equipmentType === "Accesorii") && (serialNumber === "" || serialNumber.toLowerCase() === "n/a")) {
+                            serialNumber = "N/A";
+                        }
+
+                        if (!serialNumber) {
+                            serialNumber = "N/A";
+                        }
+
+                        // Duplicate serial check on equipment (non-cables and non-accessories)
+                        if (serialNumber !== "N/A" && equipmentType !== "Accesorii" && equipmentType !== "Cabluri") {
+                            var duplicate = config.records.find(function(r) {
+                                return r.serialNumber.toLowerCase() === serialNumber.toLowerCase();
+                            });
+                            if (duplicate) {
+                                var overwrite = confirm("Row #" + (i + 2) + ": Duplicate serial number '" + serialNumber + "' found for existing equipment '" + duplicate.equipmentType + "'!\n\nClick OK to OVERWRITE the existing record, or Cancel to IGNORE and skip this row.");
+                                if (overwrite) {
+                                    // Overwrite: update the duplicate's properties
+                                    duplicate.equipmentType = equipmentType;
+                                    duplicate.partNumber = partNumber;
+                                    duplicate.description = description;
+                                    duplicate.location = location;
+                                    overwrittenCount++;
+                                    continue;
+                                } else {
+                                    // Ignore: skip the row
+                                    skippedCount++;
+                                    continue;
+                                }
+                            }
+                        }
+
+                        // Push new record
+                        var newId = config.records.length > 0 ? Math.max.apply(Math, config.records.map(function(o) { return o.id; })) + 1 : 1;
+                        config.records.push({
+                            id: newId,
+                            equipmentType: equipmentType,
+                            partNumber: partNumber,
+                            description: description,
+                            serialNumber: serialNumber,
+                            location: location
+                        });
+
+                        // Dynamically append location and SN suggestions if new
+                        if (config.locations.indexOf(location) === -1) {
+                            config.locations.push(location);
+                        }
+                        if (!config.serialNumbers[equipmentType]) {
+                            config.serialNumbers[equipmentType] = [];
+                        }
+                        if (serialNumber !== "N/A" && config.serialNumbers[equipmentType].indexOf(serialNumber) === -1) {
+                            config.serialNumbers[equipmentType].push(serialNumber);
+                        }
+
+                        addedCount++;
+                    }
+
+                    // Refresh page structures
+                    populateLocationsDatalist();
+                    renderRecords();
+                    localStorage.setItem("hosted_local_backup", JSON.stringify(config));
+
+                    alert("Import completed successfully!\n\nAdded: " + addedCount + "\nOverwritten: " + overwrittenCount + "\nSkipped/Invalid: " + skippedCount);
+                } catch (err) {
+                    console.error("Excel parse error", err);
+                    alert("Error parsing Excel file! Make sure it is a valid .xls or .xlsx spreadsheet.");
+                }
+            };
+            reader.readAsArrayBuffer(file);
+            // Clear file input value to allow re-import of same file if needed
+            event.target.value = "";
+        }
+
+        // Case insensitive utility to lookup key matches in object properties
+        function getObjectValueCaseInsensitive(obj, potentialKeys) {
+            var keys = Object.keys(obj);
+            for (var i = 0; i < potentialKeys.length; i++) {
+                var pk = potentialKeys[i].toLowerCase();
+                for (var j = 0; j < keys.length; j++) {
+                    if (keys[j].toLowerCase() === pk) {
+                        return obj[keys[j]];
+                    }
+                }
+            }
+            return "";
         }
     </script>
 </body>
