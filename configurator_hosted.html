@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Industrial Equipment Configurator v1.2.0 (Cloud Hosted)</title>
+    <title>Industrial Equipment Configurator v1.3.0 (Cloud Hosted)</title>
     <!-- Tailwind CSS CDN for a modern, responsive interface -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700&display=swap" rel="stylesheet">
@@ -29,7 +29,7 @@
             <div class="min-w-0">
                 <div class="flex items-center space-x-2">
                     <h1 class="text-sm sm:text-base font-bold tracking-tight text-slate-900 truncate">Equipment Configurator</h1>
-                    <span class="inline-flex items-center rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-700/10 flex-shrink-0">v1.2.0</span>
+                    <span class="inline-flex items-center rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-700/10 flex-shrink-0">v1.3.0</span>
                 </div>
                 <p class="hidden sm:block text-xs font-medium text-slate-500">Cloud Synchronized / LocalStorage Management</p>
             </div>
@@ -74,13 +74,14 @@
                     <p id="stat-total-records" class="text-xl sm:text-2xl font-bold text-slate-900">0</p>
                 </div>
             </div>
+            <!-- Modified Middle Stat: Showing Expired Loans instead of Active Matrix Scanners -->
             <div class="flex items-center space-x-4 rounded-2xl border border-slate-200/80 bg-white p-4 sm:p-5 shadow-sm">
-                <div class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 flex-shrink-0">
-                    <i class="fa-solid fa-barcode text-lg sm:text-xl"></i>
+                <div id="expired-loans-bg" class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 flex-shrink-0 transition-colors">
+                    <i class="fa-solid fa-calendar-circle-exclamation text-lg sm:text-xl"></i>
                 </div>
                 <div>
-                    <p class="text-xs sm:text-sm font-medium text-slate-500">Active Matrix Scanners</p>
-                    <p id="stat-matrix-scanners" class="text-xl sm:text-2xl font-bold text-slate-900">0</p>
+                    <p class="text-xs sm:text-sm font-medium text-slate-500">Expired Loans</p>
+                    <p id="stat-expired-loans" class="text-xl sm:text-2xl font-bold text-slate-900">0</p>
                 </div>
             </div>
             <div class="flex items-center space-x-4 rounded-2xl border border-slate-200/80 bg-white p-4 sm:p-5 shadow-sm">
@@ -167,6 +168,18 @@
                             </div>
                         </div>
 
+                        <!-- Loan Return Date (Default is N/A, toggles date picker on selection) -->
+                        <div>
+                            <label for="loan-return-option" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Loan Return Date</label>
+                            <div class="flex gap-2">
+                                <select id="loan-return-option" onchange="toggleLoanDateField()" class="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-800 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100 cursor-pointer">
+                                    <option value="NA">N/A</option>
+                                    <option value="DATE">Set Date...</option>
+                                </select>
+                                <input type="date" id="loan-return-date" class="hidden flex-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100 cursor-pointer">
+                            </div>
+                        </div>
+
                         <button type="submit" id="btn-submit" class="w-full inline-flex items-center justify-center space-x-1.5 rounded-lg bg-slate-900 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none cursor-pointer">
                             <i class="fa-solid fa-plus-circle"></i>
                             <span id="submit-btn-text">Add to List</span>
@@ -183,7 +196,7 @@
                     <div class="space-y-3">
                         <p class="text-[11px] text-slate-500 leading-relaxed">
                             Upload an Excel spreadsheet with the columns:
-                            <strong class="font-semibold block text-slate-700">Part Number, Description, Serial Number, Location</strong>
+                            <strong class="font-semibold block text-slate-700">Part Number, Description, Serial Number, Location, Loan Return Date</strong>
                             Optionally include <strong class="font-semibold text-slate-700">Equipment Type</strong> (defaults to 'Blade' if empty).
                         </p>
                         <div class="relative flex items-center justify-center w-full">
@@ -217,7 +230,7 @@
 
                     <!-- Responsive Table Wrapper -->
                     <div class="w-full overflow-x-auto">
-                        <table class="w-full min-w-[700px] border-collapse text-left text-sm text-slate-600">
+                        <table class="w-full min-w-[850px] border-collapse text-left text-sm text-slate-600">
                             <thead class="bg-slate-50/75 border-b border-slate-100 text-xs font-bold uppercase tracking-wider text-slate-500">
                                 <tr>
                                     <th class="px-4 sm:px-6 py-4 font-bold text-center w-14">No.</th>
@@ -226,6 +239,7 @@
                                     <th class="px-4 sm:px-6 py-4">Description</th>
                                     <th class="px-4 sm:px-6 py-4">Serial Number (SN)</th>
                                     <th class="px-4 sm:px-6 py-4">Location</th>
+                                    <th class="px-4 sm:px-6 py-4">Loan Return Date</th>
                                     <th class="px-4 sm:px-6 py-4 text-center w-28">Actions</th>
                                 </tr>
                             </thead>
@@ -301,7 +315,17 @@
                     "partNumber": "937900120",
                     "description": "Primary assembly line scanner",
                     "serialNumber": "M320_5M-5511",
-                    "location": "Zona B - Sortare"
+                    "location": "Zona B - Sortare",
+                    "loanReturnDate": "N/A"
+                },
+                {
+                    "id": 2,
+                    "equipmentType": "Thor",
+                    "partNumber": "93A050043",
+                    "description": "Forklift computer terminal",
+                    "serialNumber": "TH-1211",
+                    "location": "Zona A - Asamblare",
+                    "loanReturnDate": "2023-11-20" // Expired loan example
                 }
             ]
         };
@@ -349,6 +373,33 @@
             toggleSettingsModal(false);
             loadSettings();
             fetchConfiguration(); // pull data from the new host URL
+        }
+
+        // Toggle visibility of the HTML5 date input depending on whether N/A or Set Date is picked
+        function toggleLoanDateField() {
+            var option = document.getElementById("loan-return-option").value;
+            var dateInput = document.getElementById("loan-return-date");
+            if (option === "DATE") {
+                dateInput.classList.remove("hidden");
+            } else {
+                dateInput.classList.add("hidden");
+                dateInput.value = "";
+            }
+        }
+
+        // Helper to check if a specific loan date string has expired compared to the current system date
+        function isLoanExpired(dateStr) {
+            if (!dateStr || dateStr === "N/A" || dateStr === "NA") return false;
+
+            var loanDate = new Date(dateStr);
+            if (isNaN(loanDate.getTime())) return false; // Invalid date
+
+            // Normalize current system date to midnight for accurate day comparison
+            var today = new Date();
+            today.setHours(0,0,0,0);
+            loanDate.setHours(0,0,0,0);
+
+            return loanDate < today;
         }
 
         // Load configuration from either the REST Cloud API or LocalStorage
@@ -513,11 +564,13 @@
 
             var filteredRecords = config.records.filter(function(rec) {
                 var desc = rec.description || "";
+                var loanDate = rec.loanReturnDate || "N/A";
                 return rec.equipmentType.toLowerCase().indexOf(searchTerm) !== -1 ||
                        rec.partNumber.toLowerCase().indexOf(searchTerm) !== -1 ||
                        desc.toLowerCase().indexOf(searchTerm) !== -1 ||
                        rec.serialNumber.toLowerCase().indexOf(searchTerm) !== -1 ||
-                       rec.location.toLowerCase().indexOf(searchTerm) !== -1;
+                       rec.location.toLowerCase().indexOf(searchTerm) !== -1 ||
+                       loanDate.toLowerCase().indexOf(searchTerm) !== -1;
             });
 
             if (filteredRecords.length === 0) {
@@ -529,49 +582,70 @@
             for (var i = 0; i < filteredRecords.length; i++) {
                 var rec = filteredRecords[i];
                 var row = document.createElement("tr");
-                row.className = "hover:bg-slate-50 transition border-b border-slate-100";
+
+                // Determine if this row's loan is expired
+                var expired = isLoanExpired(rec.loanReturnDate);
+
+                // If loan is expired, display the row text as red (text-rose-600)
+                if (expired) {
+                    row.className = "bg-rose-50/40 hover:bg-rose-50 transition border-b border-rose-100 text-rose-600";
+                } else {
+                    row.className = "hover:bg-slate-50 transition border-b border-slate-100 text-slate-600";
+                }
 
                 var indexCell = document.createElement("td");
-                indexCell.className = "px-4 sm:px-6 py-4 text-center font-bold text-slate-400";
+                indexCell.className = "px-4 sm:px-6 py-4 text-center font-bold" + (expired ? " text-rose-400" : " text-slate-400");
                 indexCell.textContent = i + 1;
                 row.appendChild(indexCell);
 
                 var typeCell = document.createElement("td");
-                typeCell.className = "px-4 sm:px-6 py-4 font-semibold text-slate-900";
+                typeCell.className = "px-4 sm:px-6 py-4 font-semibold" + (expired ? " text-rose-900" : " text-slate-900");
                 var badgeClass = "bg-slate-100 text-slate-800";
                 if (rec.equipmentType.indexOf("Matrix") !== -1) {
-                    badgeClass = "bg-indigo-50 text-indigo-700";
+                    badgeClass = expired ? "bg-rose-100 text-rose-800" : "bg-indigo-50 text-indigo-700";
                 } else if (rec.equipmentType === "Thor") {
-                    badgeClass = "bg-emerald-50 text-emerald-700";
+                    badgeClass = expired ? "bg-rose-100 text-rose-800" : "bg-emerald-50 text-emerald-700";
                 } else if (rec.equipmentType === "Blade") {
-                    badgeClass = "bg-amber-50 text-amber-700";
+                    badgeClass = expired ? "bg-rose-100 text-rose-800" : "bg-amber-50 text-amber-700";
                 } else if (rec.equipmentType === "Accesorii") {
-                    badgeClass = "bg-purple-50 text-purple-700";
+                    badgeClass = expired ? "bg-rose-100 text-rose-800" : "bg-purple-50 text-purple-700";
                 } else if (rec.equipmentType === "Cabluri") {
-                    badgeClass = "bg-sky-50 text-sky-700";
+                    badgeClass = expired ? "bg-rose-100 text-rose-800" : "bg-sky-50 text-sky-700";
                 }
                 typeCell.innerHTML = '<span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-semibold ' + badgeClass + '">' + rec.equipmentType + '</span>';
                 row.appendChild(typeCell);
 
                 var pnCell = document.createElement("td");
-                pnCell.className = "px-4 sm:px-6 py-4 font-mono text-sm text-slate-700 tracking-tight";
+                pnCell.className = "px-4 sm:px-6 py-4 font-mono text-sm tracking-tight" + (expired ? " text-rose-700" : " text-slate-700");
                 pnCell.textContent = rec.partNumber;
                 row.appendChild(pnCell);
 
                 var descCell = document.createElement("td");
-                descCell.className = "px-4 sm:px-6 py-4 text-xs text-slate-600 max-w-xs truncate";
+                descCell.className = "px-4 sm:px-6 py-4 text-xs max-w-xs truncate" + (expired ? " text-rose-500" : " text-slate-600");
                 descCell.textContent = rec.description || "-";
                 row.appendChild(descCell);
 
                 var snCell = document.createElement("td");
-                snCell.className = "px-4 sm:px-6 py-4 font-mono text-sm font-semibold text-slate-900 tracking-tight";
+                snCell.className = "px-4 sm:px-6 py-4 font-mono text-sm font-semibold tracking-tight" + (expired ? " text-rose-900" : " text-slate-900");
                 snCell.textContent = rec.serialNumber || "N/A";
                 row.appendChild(snCell);
 
                 var locCell = document.createElement("td");
-                locCell.className = "px-4 sm:px-6 py-4 text-slate-600";
-                locCell.innerHTML = '<span class="inline-flex items-center space-x-1.5"><i class="fa-solid fa-location-dot text-slate-400"></i> <span>' + rec.location + '</span></span>';
+                locCell.className = "px-4 sm:px-6 py-4";
+                locCell.innerHTML = '<span class="inline-flex items-center space-x-1.5"><i class="fa-solid fa-location-dot ' + (expired ? "text-rose-400" : "text-slate-400") + '"></i> <span>' + rec.location + '</span></span>';
                 row.appendChild(locCell);
+
+                // Loan Return Date column
+                var loanCell = document.createElement("td");
+                loanCell.className = "px-4 sm:px-6 py-4 font-semibold text-xs";
+                if (expired) {
+                    loanCell.innerHTML = '<span class="inline-flex items-center gap-1 text-rose-600"><i class="fa-solid fa-calendar-times"></i> ' + rec.loanReturnDate + ' (EXPIRED)</span>';
+                } else if (rec.loanReturnDate && rec.loanReturnDate !== "N/A" && rec.loanReturnDate !== "NA") {
+                    loanCell.innerHTML = '<span class="inline-flex items-center gap-1 text-slate-600"><i class="fa-solid fa-calendar-check"></i> ' + rec.loanReturnDate + '</span>';
+                } else {
+                    loanCell.innerHTML = '<span class="text-slate-400">N/A</span>';
+                }
+                row.appendChild(loanCell);
 
                 var actionCell = document.createElement("td");
                 actionCell.className = "px-4 sm:px-6 py-4 text-center whitespace-nowrap space-x-2";
@@ -592,16 +666,27 @@
 
         function updateStatistics() {
             document.getElementById("stat-total-records").textContent = config.records.length;
-            var matrixCount = 0;
+
+            // Calculate expired loans count and unique locations
+            var expiredLoansCount = 0;
             var uniqueLocations = {};
             for (var i = 0; i < config.records.length; i++) {
-                if (config.records[i].equipmentType.indexOf("Matrix") !== -1) {
-                    matrixCount++;
+                if (isLoanExpired(config.records[i].loanReturnDate)) {
+                    expiredLoansCount++;
                 }
                 uniqueLocations[config.records[i].location] = true;
             }
-            document.getElementById("stat-matrix-scanners").textContent = matrixCount;
+
+            document.getElementById("stat-expired-loans").textContent = expiredLoansCount;
             document.getElementById("stat-unique-locations").textContent = Object.keys(uniqueLocations).length;
+
+            // Visual indicator of active alert on expired loans icon background
+            var expiredBg = document.getElementById("expired-loans-bg");
+            if (expiredLoansCount > 0) {
+                expiredBg.className = "flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-rose-50 text-rose-600 flex-shrink-0 transition-colors";
+            } else {
+                expiredBg.className = "flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-slate-50 text-slate-400 flex-shrink-0 transition-colors";
+            }
         }
 
         // Add or Update from Form submit
@@ -614,6 +699,14 @@
             var description = document.getElementById("description").value.trim();
             var serialNumber = document.getElementById("serial-number").value.trim();
             var location = document.getElementById("location").value.trim();
+
+            // Check loan return option
+            var loanReturnOption = document.getElementById("loan-return-option").value;
+            var loanReturnDate = "N/A";
+            if (loanReturnOption === "DATE") {
+                var rawDate = document.getElementById("loan-return-date").value;
+                loanReturnDate = rawDate ? rawDate : "N/A";
+            }
 
             if (!equipmentType || !partNumber || !location) {
                 alert("Please fill in all mandatory fields.");
@@ -665,6 +758,7 @@
                         config.records[i].description = description;
                         config.records[i].serialNumber = serialNumber;
                         config.records[i].location = location;
+                        config.records[i].loanReturnDate = loanReturnDate;
                         break;
                     }
                 }
@@ -676,7 +770,8 @@
                     partNumber: partNumber,
                     description: description,
                     serialNumber: serialNumber,
-                    location: location
+                    location: location,
+                    loanReturnDate: loanReturnDate
                 });
             }
 
@@ -711,6 +806,21 @@
 
             document.getElementById("location").value = target.location;
 
+            // Load loan fields correctly
+            var returnDateVal = target.loanReturnDate || "N/A";
+            var optionSelect = document.getElementById("loan-return-option");
+            var dateInput = document.getElementById("loan-return-date");
+
+            if (returnDateVal !== "N/A" && returnDateVal !== "NA" && returnDateVal !== "") {
+                optionSelect.value = "DATE";
+                dateInput.classList.remove("hidden");
+                dateInput.value = returnDateVal;
+            } else {
+                optionSelect.value = "NA";
+                dateInput.classList.add("hidden");
+                dateInput.value = "";
+            }
+
             document.getElementById("form-title").innerHTML = '<i class="fa-solid fa-pen text-indigo-600"></i> Edit Equipment';
             document.getElementById("submit-btn-text").textContent = "Save Changes";
             document.getElementById("btn-submit").className = "w-full inline-flex items-center justify-center space-x-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-indigo-700 focus:outline-none cursor-pointer";
@@ -722,6 +832,12 @@
             document.getElementById("edit-id").value = "";
             document.getElementById("record-idx").value = "Auto-generated";
             onEquipmentTypeChange();
+
+            // Reset loan fields
+            document.getElementById("loan-return-option").value = "NA";
+            var dateInput = document.getElementById("loan-return-date");
+            dateInput.classList.add("hidden");
+            dateInput.value = "";
 
             document.getElementById("form-title").innerHTML = '<i class="fa-solid fa-circle-plus text-indigo-600"></i> Add Equipment';
             document.getElementById("submit-btn-text").textContent = "Add to List";
@@ -750,11 +866,8 @@
                     var data = new Uint8Array(e.target.result);
                     var workbook = XLSX.read(data, { type: 'array' });
 
-                    // Read the very first sheet
                     var firstSheetName = workbook.SheetNames[0];
                     var worksheet = workbook.Sheets[firstSheetName];
-
-                    // Convert raw cells to array of arrays or raw row objects
                     var rawRows = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
 
                     if (rawRows.length === 0) {
@@ -769,12 +882,12 @@
                     for (var i = 0; i < rawRows.length; i++) {
                         var row = rawRows[i];
 
-                        // Flexible, case-insensitive column mapping
                         var partNumber = getObjectValueCaseInsensitive(row, ["Part Number", "PN", "PartNo", "Cod Part"]);
                         var description = getObjectValueCaseInsensitive(row, ["Description", "Descriere", "Desc"]);
                         var serialNumber = getObjectValueCaseInsensitive(row, ["Serial Number", "SN", "SerialNo", "Serie"]);
                         var location = getObjectValueCaseInsensitive(row, ["Location", "Locatie", "Loc"]);
                         var equipmentType = getObjectValueCaseInsensitive(row, ["Equipment Type", "Type", "Echipament", "Tip"]);
+                        var loanReturnDate = getObjectValueCaseInsensitive(row, ["Loan Return Date", "LoanReturnDate", "Loan Date", "Return Date", "Data Returnare", "Data Imprumut"]);
 
                         // Clean data
                         partNumber = String(partNumber).trim();
@@ -783,22 +896,45 @@
                         location = String(location).trim();
                         equipmentType = String(equipmentType).trim();
 
-                        // Require at least Part Number and Location to be valid
+                        // Parse or default loan date
+                        loanReturnDate = String(loanReturnDate).trim();
+                        if (loanReturnDate === "" || loanReturnDate.toLowerCase() === "n/a" || loanReturnDate.toLowerCase() === "na") {
+                            loanReturnDate = "N/A";
+                        } else {
+                            // Convert Excel date serial numbers to strings if needed
+                            if (!isNaN(Number(loanReturnDate)) && Number(loanReturnDate) > 30000) {
+                                // SheetJS auto conversion helper
+                                var dateObj = XLSX.SSF.parse_date_code(Number(loanReturnDate));
+                                if (dateObj) {
+                                    var mm = dateObj.m < 10 ? "0" + dateObj.m : dateObj.m;
+                                    var dd = dateObj.d < 10 ? "0" + dateObj.d : dateObj.d;
+                                    loanReturnDate = dateObj.y + "-" + mm + "-" + dd;
+                                }
+                            } else {
+                                // Try standard parsing
+                                var dateCheck = new Date(loanReturnDate);
+                                if (!isNaN(dateCheck.getTime())) {
+                                    var mm = (dateCheck.getMonth() + 1) < 10 ? "0" + (dateCheck.getMonth() + 1) : (dateCheck.getMonth() + 1);
+                                    var dd = dateCheck.getDate() < 10 ? "0" + dateCheck.getDate() : dateCheck.getDate();
+                                    loanReturnDate = dateCheck.getFullYear() + "-" + mm + "-" + dd;
+                                } else {
+                                    loanReturnDate = "N/A";
+                                }
+                            }
+                        }
+
                         if (!partNumber || !location) {
                             skippedCount++;
                             continue;
                         }
 
-                        // Default Equipment Type logic
                         if (!equipmentType) {
-                            // Deduce from values or default to Blade
                             if (serialNumber === "" || serialNumber.toLowerCase() === "n/a") {
                                 equipmentType = "Accesorii";
                             } else {
                                 equipmentType = "Blade";
                             }
                         } else {
-                            // Match with our known list or insert dynamically
                             var matchedType = config.equipmentTypes.find(function(t) {
                                 return t.toLowerCase() === equipmentType.toLowerCase();
                             });
@@ -810,7 +946,6 @@
                             }
                         }
 
-                        // For Cabluri and Accesorii, if empty set N/A
                         if ((equipmentType === "Cabluri" || equipmentType === "Accesorii") && (serialNumber === "" || serialNumber.toLowerCase() === "n/a")) {
                             serialNumber = "N/A";
                         }
@@ -819,7 +954,7 @@
                             serialNumber = "N/A";
                         }
 
-                        // Duplicate serial check on equipment (non-cables and non-accessories)
+                        // Duplicate serial check on equipment
                         if (serialNumber !== "N/A" && equipmentType !== "Accesorii" && equipmentType !== "Cabluri") {
                             var duplicate = config.records.find(function(r) {
                                 return r.serialNumber.toLowerCase() === serialNumber.toLowerCase();
@@ -827,15 +962,14 @@
                             if (duplicate) {
                                 var overwrite = confirm("Row #" + (i + 2) + ": Duplicate serial number '" + serialNumber + "' found for existing equipment '" + duplicate.equipmentType + "'!\n\nClick OK to OVERWRITE the existing record, or Cancel to IGNORE and skip this row.");
                                 if (overwrite) {
-                                    // Overwrite: update the duplicate's properties
                                     duplicate.equipmentType = equipmentType;
                                     duplicate.partNumber = partNumber;
                                     duplicate.description = description;
                                     duplicate.location = location;
+                                    duplicate.loanReturnDate = loanReturnDate;
                                     overwrittenCount++;
                                     continue;
                                 } else {
-                                    // Ignore: skip the row
                                     skippedCount++;
                                     continue;
                                 }
@@ -850,10 +984,11 @@
                             partNumber: partNumber,
                             description: description,
                             serialNumber: serialNumber,
-                            location: location
+                            location: location,
+                            loanReturnDate: loanReturnDate
                         });
 
-                        // Dynamically append location and SN suggestions if new
+                        // Suggestions lists
                         if (config.locations.indexOf(location) === -1) {
                             config.locations.push(location);
                         }
@@ -867,7 +1002,6 @@
                         addedCount++;
                     }
 
-                    // Refresh page structures
                     populateLocationsDatalist();
                     renderRecords();
                     localStorage.setItem("hosted_local_backup", JSON.stringify(config));
@@ -879,7 +1013,6 @@
                 }
             };
             reader.readAsArrayBuffer(file);
-            // Clear file input value to allow re-import of same file if needed
             event.target.value = "";
         }
 
