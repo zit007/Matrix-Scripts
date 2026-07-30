@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Equipment Manager v2.0.0 (Ocean Blue Cloud)</title>
+    <title>Equipment Manager v2.1.0 (Ocean Blue Cloud)</title>
     <!-- Tailwind CSS CDN for a modern, responsive interface -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Inter Font for beautiful modern typography -->
@@ -31,7 +31,7 @@
             <div class="min-w-0">
                 <div class="flex items-center space-x-2">
                     <h1 class="text-sm sm:text-base font-bold tracking-tight text-white truncate">Equipment Recordings</h1>
-                    <span class="inline-flex items-center rounded-md bg-sky-500/20 px-2 py-0.5 text-xs font-semibold text-sky-300 ring-1 ring-inset ring-sky-500/30 flex-shrink-0">v2.0.0</span>
+                    <span class="inline-flex items-center rounded-md bg-sky-500/20 px-2 py-0.5 text-xs font-semibold text-sky-300 ring-1 ring-inset ring-sky-500/30 flex-shrink-0">v2.1.0</span>
                 </div>
                 <p class="hidden sm:block text-xs font-medium text-slate-400">Professional Ocean Blue Cloud Management</p>
             </div>
@@ -215,8 +215,36 @@
                 </div>
             </div>
 
-            <!-- Right Side: Equipment Recordings Table -->
-            <div class="lg:col-span-3">
+            <!-- Right Side: Equipment Recordings Table & Filters (Expanded to 3 columns out of 4) -->
+            <div class="lg:col-span-3 space-y-6">
+                <!-- Location Multi-select Filter Panel -->
+                <div class="rounded-2xl border border-sky-500/15 bg-slate-900/50 p-5 shadow-md backdrop-blur">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-sky-500/15 pb-3 mb-4 gap-4">
+                        <h3 class="text-xs font-bold text-sky-300 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-filter text-sky-400"></i>
+                            <span>Filter by Location</span>
+                        </h3>
+                        <div class="flex items-center space-x-3">
+                            <button onclick="sortLocationsAlphabetically(true)" class="inline-flex items-center space-x-1.5 rounded bg-slate-800 px-2 py-1 text-[10px] font-semibold text-sky-300 hover:bg-slate-700 transition cursor-pointer" title="Sort A to Z">
+                                <i class="fa-solid fa-arrow-down-a-z"></i>
+                                <span>A-Z</span>
+                            </button>
+                            <button onclick="sortLocationsAlphabetically(false)" class="inline-flex items-center space-x-1.5 rounded bg-slate-800 px-2 py-1 text-[10px] font-semibold text-sky-300 hover:bg-slate-700 transition cursor-pointer" title="Sort Z to A">
+                                <i class="fa-solid fa-arrow-down-z-a"></i>
+                                <span>Z-A</span>
+                            </button>
+                            <button onclick="toggleAllLocationFilters(true)" class="text-[10px] font-bold text-sky-400 hover:text-white transition cursor-pointer">Select All</button>
+                            <span class="text-slate-600 text-xs">|</span>
+                            <button onclick="toggleAllLocationFilters(false)" class="text-[10px] font-bold text-rose-400 hover:text-white transition cursor-pointer">Clear All</button>
+                        </div>
+                    </div>
+                    <!-- Locations Tick boxes Container -->
+                    <div id="location-filters-container" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 max-h-32 overflow-y-auto pr-1">
+                        <!-- Location Checkboxes dynamically populate here -->
+                    </div>
+                </div>
+
+                <!-- Table Card -->
                 <div class="rounded-2xl border border-sky-500/15 bg-slate-900/40 shadow-lg overflow-hidden backdrop-blur">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-sky-500/15 bg-[#060e1a]/40 p-4 sm:p-6 gap-4">
                         <div>
@@ -283,7 +311,7 @@
                 </div>
                 <div>
                     <label for="settings-api-key" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Security Key / Password (Optional)</label>
-                    <input type="password" id="settings-api-key" placeholder="API Access Password" class="w-full rounded-lg border border-sky-500/20 bg-[#060e1a]/80 px-3 py-2 text-xs text-white shadow-sm focus:border-orange-500 focus:outline-none">
+                    <input type="password" id="settings-api-key" placeholder="API Access Password" class="w-full rounded-lg border border-[#060e1a] bg-[#060e1a]/80 px-3 py-2 text-xs text-white shadow-sm focus:border-orange-500 focus:outline-none">
                 </div>
             </div>
 
@@ -332,10 +360,13 @@
     }
     </script>
 
-    <!-- Script Dynamic Context & Synchronizer (V2.0.0 Refactor) -->
+    <!-- Script Dynamic Context & Synchronizer (V2.1.0 Refactor) -->
     <script>
         // Centralized DOM cache to avoid repetitive document.getElementById lookups
         let DOM = {};
+
+        // Track location tick box filters state
+        const checkedLocations = new Set();
 
         // Centralized State Management / Data Store Class using ES6 let/const and Arrow Functions
         class ConfigurationStore {
@@ -412,7 +443,8 @@
                 statUniqueLocations: document.getElementById("stat-unique-locations"),
                 expiredLoansBg: document.getElementById("expired-loans-bg"),
                 syncStatus: document.getElementById("sync-status"),
-                apiAlertBanner: document.getElementById("api-alert-banner")
+                apiAlertBanner: document.getElementById("api-alert-banner"),
+                locationFiltersContainer: document.getElementById("location-filters-container")
             };
 
             loadSettings();
@@ -527,8 +559,13 @@
                     Store.config = data;
                     Store.saveLocalBackup();
                     setSyncStatus("cloud", "Connected to Cloud");
+
+                    // Select all locations by default on first load
+                    Store.config.locations.forEach(loc => checkedLocations.add(loc));
+
                     populateLocationsDatalist();
                     onEquipmentTypeChange();
+                    renderLocationFilters();
                     renderRecords();
                 })
                 .catch(err => {
@@ -544,8 +581,13 @@
 
         const loadLocalData = () => {
             Store.loadBackup();
+
+            // Select all locations by default
+            Store.config.locations.forEach(loc => checkedLocations.add(loc));
+
             populateLocationsDatalist();
             onEquipmentTypeChange();
+            renderLocationFilters();
             renderRecords();
         };
 
@@ -592,7 +634,9 @@
                 // Handle location dynamic append
                 if (!Store.config.locations.includes(location)) {
                     Store.config.locations.push(location);
+                    checkedLocations.add(location); // ensure newly added location is checked
                     populateLocationsDatalist();
+                    renderLocationFilters();
                 }
 
                 // Handle SN dynamic autocomplete append
@@ -659,20 +703,77 @@
             }
         };
 
-        // Render records in table with pristine clear typography & layout spacing
+        // Render Location tickbox filters dynamically
+        const renderLocationFilters = () => {
+            DOM.locationFiltersContainer.innerHTML = "";
+
+            Store.config.locations.forEach((loc, idx) => {
+                const label = document.createElement("label");
+                label.className = "flex items-center space-x-2 text-xs text-slate-300 hover:text-white transition cursor-pointer select-none py-1 px-2 rounded-lg bg-slate-900/30 hover:bg-slate-900/60";
+
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.className = "rounded border-slate-700 bg-slate-800 text-sky-600 focus:ring-sky-500 focus:ring-offset-slate-900 cursor-pointer";
+                checkbox.checked = checkedLocations.has(loc);
+
+                checkbox.addEventListener("change", (e) => {
+                    if (e.target.checked) {
+                        checkedLocations.add(loc);
+                    } else {
+                        checkedLocations.delete(loc);
+                    }
+                    renderRecords();
+                });
+
+                const textSpan = document.createElement("span");
+                textSpan.className = "truncate";
+                textSpan.textContent = loc;
+
+                label.appendChild(checkbox);
+                label.appendChild(textSpan);
+                DOM.locationFiltersContainer.appendChild(label);
+            });
+        };
+
+        // Sort locations alphabetically (true = A-Z, false = Z-A)
+        const sortLocationsAlphabetically = (ascending) => {
+            Store.config.locations.sort((a, b) => {
+                return ascending ? a.localeCompare(b) : b.localeCompare(a);
+            });
+            renderLocationFilters();
+        };
+
+        // Toggle all location filters at once
+        const toggleAllLocationFilters = (checked) => {
+            if (checked) {
+                Store.config.locations.forEach(loc => checkedLocations.add(loc));
+            } else {
+                checkedLocations.clear();
+            }
+            renderLocationFilters();
+            renderRecords();
+        };
+
+        // Render records in table with location filter filtering applied
         const renderRecords = () => {
             const searchTerm = DOM.searchInput.value.toLowerCase();
             DOM.recordsTbody.innerHTML = "";
 
+            // Filter records based on both general text search AND location check box filters
             const filteredRecords = Store.config.records.filter(rec => {
                 const desc = rec.description || "";
                 const loanDate = rec.loanReturnDate || "N/A";
-                return rec.equipmentType.toLowerCase().includes(searchTerm) ||
-                       rec.partNumber.toLowerCase().includes(searchTerm) ||
-                       desc.toLowerCase().includes(searchTerm) ||
-                       rec.serialNumber.toLowerCase().includes(searchTerm) ||
-                       rec.location.toLowerCase().includes(searchTerm) ||
-                       loanDate.toLowerCase().includes(searchTerm);
+
+                const matchesSearch = rec.equipmentType.toLowerCase().includes(searchTerm) ||
+                                      rec.partNumber.toLowerCase().includes(searchTerm) ||
+                                      desc.toLowerCase().includes(searchTerm) ||
+                                      rec.serialNumber.toLowerCase().includes(searchTerm) ||
+                                      rec.location.toLowerCase().includes(searchTerm) ||
+                                      loanDate.toLowerCase().includes(searchTerm);
+
+                const matchesLocation = checkedLocations.has(rec.location);
+
+                return matchesSearch && matchesLocation;
             });
 
             if (filteredRecords.length === 0) {
@@ -685,14 +786,12 @@
                 const row = document.createElement("tr");
                 const expired = isLoanExpired(rec.loanReturnDate);
 
-                // Pristine Clean Readability Design row background
                 if (expired) {
                     row.className = "bg-rose-950/20 hover:bg-rose-950/30 transition border-b border-rose-500/20 text-rose-300 font-medium";
                 } else {
                     row.className = "hover:bg-slate-800/40 transition border-b border-sky-500/10 text-slate-200";
                 }
 
-                // Row columns templates with literal templates
                 row.innerHTML = `
                     <td class="px-4 sm:px-6 py-4 text-center font-bold ${expired ? 'text-rose-400' : 'text-slate-500'}">${i + 1}</td>
                     <td class="px-4 sm:px-6 py-4">
@@ -795,7 +894,6 @@
                     if (!overwrite) {
                         return;
                     }
-                    // Filter out overwritten duplicate record
                     Store.config.records = Store.config.records.filter(r => r.id !== duplicate.id);
                 }
             }
@@ -1040,6 +1138,7 @@
                     });
 
                     populateLocationsDatalist();
+                    renderLocationFilters();
                     renderRecords();
                     Store.saveLocalBackup();
 
