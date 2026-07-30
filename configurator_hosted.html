@@ -3,54 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Industrial Equipment Configurator v1.5.0 (Cloud Hosted)</title>
+    <title>Equipment Manager v2.0.0 (Ocean Blue Cloud)</title>
     <!-- Tailwind CSS CDN for a modern, responsive interface -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font for a professional, highly-readable layout -->
+    <!-- Inter Font for beautiful modern typography -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome for beautiful modern icons -->
+    <!-- FontAwesome for uniform, modern icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- SheetJS (xlsx) for importing Excel files in-browser -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         body {
-            /* SUSE-inspired Pastel Linux Theme */
-            /* Using Geeko Pine Green, soft pastel greens, and mint colors */
             font-family: 'Inter', sans-serif;
-            background-color: #0c1a15; /* Deep SUSE Dark Green */
-            background-image: radial-gradient(circle at 100% 0%, #173d2f 0%, #0c1a15 100%);
+            background-color: #0f172a; /* Slate 900 */
+            background-image: radial-gradient(circle at 100% 0%, #0369a1 0%, #0f172a 100%); /* Deep Ocean Blue radial glow */
         }
     </style>
 </head>
-<body class="min-h-screen text-emerald-100 antialiased selection:bg-emerald-600 selection:text-white pb-12">
+<body class="min-h-screen text-slate-100 antialiased selection:bg-sky-600 selection:text-white pb-12">
 
-    <!-- Top Navigation Bar - SUSE Header Styling (Pine green and pastel mint borders) -->
-    <header class="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-emerald-500/20 bg-[#060e0a]/90 px-4 sm:px-6 shadow-md backdrop-blur">
+    <!-- Top Navigation Bar - Ocean Blue Glassmorphism styling -->
+    <header class="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-sky-500/20 bg-slate-900/80 px-4 sm:px-6 shadow-lg backdrop-blur">
         <div class="flex items-center space-x-3">
-            <!-- SUSE Chameleon (Geeko) style icon block -->
-            <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-emerald-500 text-white shadow-md shadow-emerald-900/40">
-                <i class="fa-solid fa-leaf text-lg"></i>
+            <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-sky-600 text-white shadow-md shadow-sky-900/40">
+                <i class="fa-solid fa-anchor text-lg"></i>
             </div>
             <div class="min-w-0">
                 <div class="flex items-center space-x-2">
-                    <h1 class="text-sm sm:text-base font-bold tracking-tight text-white truncate">SUSE Equipment Configurator</h1>
-                    <span class="inline-flex items-center rounded-md bg-emerald-500/20 px-2 py-0.5 text-xs font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-500/30 flex-shrink-0">v1.5.0</span>
+                    <h1 class="text-sm sm:text-base font-bold tracking-tight text-white truncate">Equipment Recordings</h1>
+                    <span class="inline-flex items-center rounded-md bg-sky-500/20 px-2 py-0.5 text-xs font-semibold text-sky-300 ring-1 ring-inset ring-sky-500/30 flex-shrink-0">v2.0.0</span>
                 </div>
-                <p class="hidden sm:block text-xs font-medium text-emerald-200/60">Cloud Sync & LocalStorage • Pastel Edition</p>
+                <p class="hidden sm:block text-xs font-medium text-slate-400">Professional Ocean Blue Cloud Management</p>
             </div>
         </div>
         <div class="flex items-center space-x-2 sm:space-x-4">
             <!-- Connection Status Badge -->
-            <span id="sync-status" class="inline-flex items-center gap-1.5 rounded-full bg-emerald-950/60 px-3 py-1 text-xs font-medium text-emerald-300 ring-1 ring-inset ring-emerald-500/20">
-                <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span id="sync-status" class="inline-flex items-center gap-1.5 rounded-full bg-slate-800 px-3 py-1 text-xs font-medium text-sky-300 ring-1 ring-inset ring-sky-500/20">
+                <span class="h-1.5 w-1.5 rounded-full bg-sky-400 animate-pulse"></span>
                 <span>Local Mode (Offline)</span>
             </span>
             <!-- Settings Modal Button -->
-            <button onclick="toggleSettingsModal(true)" class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-950/40 text-emerald-300 shadow-sm hover:bg-emerald-500/20 hover:text-white transition cursor-pointer" title="Cloud API Setup">
+            <button onclick="toggleSettingsModal(true)" class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-sky-500/20 bg-slate-900/60 text-sky-300 shadow-sm hover:bg-sky-500/20 hover:text-white transition cursor-pointer" title="Cloud API Setup">
                 <i class="fa-solid fa-gear"></i>
             </button>
-            <!-- Sync/Save Button (SUSE Emerald Button) -->
-            <button onclick="saveConfiguration()" class="inline-flex items-center space-x-1.5 sm:space-x-2 rounded-lg bg-emerald-500 px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm font-bold text-[#0c1a15] shadow-lg transition hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400 cursor-pointer">
+            <!-- Sync/Save Button -->
+            <button onclick="saveConfiguration()" class="inline-flex items-center space-x-1.5 sm:space-x-2 rounded-xl bg-sky-600 px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm font-bold text-white shadow-lg transition hover:bg-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-400 cursor-pointer">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
                 <span>Save Config</span>
             </button>
@@ -60,9 +57,9 @@
     <main class="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
 
         <!-- API URL Banner Alert when not configured -->
-        <div id="api-alert-banner" class="mb-6 rounded-xl border border-emerald-500/20 bg-emerald-950/40 p-4 text-xs text-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm backdrop-blur">
+        <div id="api-alert-banner" class="mb-6 rounded-xl border border-sky-500/20 bg-slate-900/60 p-4 text-xs text-slate-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm backdrop-blur">
             <span class="flex items-center gap-2">
-                <i class="fa-solid fa-circle-info text-emerald-400 text-sm"></i>
+                <i class="fa-solid fa-circle-info text-sky-400 text-sm"></i>
                 <span>The app is currently running in **LocalStorage** mode. To sync data in real-time across devices, connect your Cloudflare API in settings.</span>
             </span>
             <button onclick="toggleSettingsModal(true)" class="font-bold underline uppercase tracking-wider hover:text-white cursor-pointer">Configure API URL</button>
@@ -70,33 +67,30 @@
 
         <!-- Quick stats cards -->
         <div class="mb-6 sm:mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <!-- Total Records Card -->
-            <div class="flex items-center space-x-4 rounded-xl border border-emerald-500/10 bg-emerald-950/20 p-4 sm:p-5 shadow-sm backdrop-blur">
-                <div class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-teal-900/40 text-teal-300 flex-shrink-0">
+            <div class="flex items-center space-x-4 rounded-2xl border border-sky-500/10 bg-slate-900/40 p-4 sm:p-5 shadow-sm backdrop-blur">
+                <div class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-sky-950/40 text-sky-400 flex-shrink-0">
                     <i class="fa-solid fa-list-ol text-lg sm:text-xl"></i>
                 </div>
                 <div>
-                    <p class="text-xs sm:text-sm font-medium text-emerald-300/60">Total Records</p>
+                    <p class="text-xs sm:text-sm font-medium text-slate-400">Total Records</p>
                     <p id="stat-total-records" class="text-xl sm:text-2xl font-bold text-white">0</p>
                 </div>
             </div>
-            <!-- Expired Loans Card -->
-            <div class="flex items-center space-x-4 rounded-xl border border-emerald-500/10 bg-emerald-950/20 p-4 sm:p-5 shadow-sm backdrop-blur">
+            <div class="flex items-center space-x-4 rounded-2xl border border-sky-500/10 bg-slate-900/40 p-4 sm:p-5 shadow-sm backdrop-blur">
                 <div id="expired-loans-bg" class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-rose-950/40 text-rose-300 flex-shrink-0 transition-colors">
                     <i class="fa-solid fa-calendar-circle-exclamation text-lg sm:text-xl"></i>
                 </div>
                 <div>
-                    <p class="text-xs sm:text-sm font-medium text-emerald-300/60">Expired Loans</p>
+                    <p class="text-xs sm:text-sm font-medium text-slate-400">Expired Loans</p>
                     <p id="stat-expired-loans" class="text-xl sm:text-2xl font-bold text-white">0</p>
                 </div>
             </div>
-            <!-- Locations Card -->
-            <div class="flex items-center space-x-4 rounded-xl border border-emerald-500/10 bg-emerald-950/20 p-4 sm:p-5 shadow-sm backdrop-blur">
-                <div class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-emerald-900/40 text-emerald-300 flex-shrink-0">
+            <div class="flex items-center space-x-4 rounded-2xl border border-sky-500/10 bg-slate-900/40 p-4 sm:p-5 shadow-sm backdrop-blur">
+                <div class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-sky-900/30 text-sky-300 flex-shrink-0">
                     <i class="fa-solid fa-location-dot text-lg sm:text-xl"></i>
                 </div>
                 <div>
-                    <p class="text-xs sm:text-sm font-medium text-emerald-300/60">Locations in Use</p>
+                    <p class="text-xs sm:text-sm font-medium text-slate-400">Locations in Use</p>
                     <p id="stat-unique-locations" class="text-xl sm:text-2xl font-bold text-white">0</p>
                 </div>
             </div>
@@ -104,16 +98,16 @@
 
         <div class="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-4">
 
-            <!-- Left Side: Add/Edit Form & Excel Import (Pastel SUSE Theme Card styling) -->
+            <!-- Left Side Selection/Input Frame (Narrowed to 1 column out of 4) -->
             <div class="lg:col-span-1 space-y-6">
                 <!-- Add/Edit Card -->
-                <div class="rounded-xl border border-emerald-500/15 bg-emerald-950/30 p-5 shadow-md backdrop-blur">
-                    <div class="mb-5 flex items-center justify-between border-b border-emerald-500/15 pb-3">
-                        <h2 id="form-title" class="text-xs font-bold text-emerald-300 uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle-plus text-emerald-400"></i>
+                <div class="rounded-2xl border border-sky-500/15 bg-slate-900/50 p-5 shadow-md backdrop-blur">
+                    <div class="mb-5 flex items-center justify-between border-b border-sky-500/15 pb-3">
+                        <h2 id="form-title" class="text-xs font-bold text-sky-300 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-plus text-sky-400"></i>
                             <span>Add Equipment</span>
                         </h2>
-                        <button id="btn-cancel-edit" onclick="resetForm()" class="hidden text-xs font-semibold text-rose-300 hover:text-rose-200 transition">
+                        <button id="btn-cancel-edit" onclick="resetForm()" class="hidden text-xs font-semibold text-rose-400 hover:text-rose-300 transition">
                             Cancel
                         </button>
                     </div>
@@ -123,14 +117,14 @@
 
                         <!-- Record Index -->
                         <div>
-                            <label class="block text-[10px] font-bold uppercase tracking-wider text-emerald-300/70 mb-1">Record ID</label>
-                            <input type="text" id="record-idx" class="w-full rounded-lg border border-emerald-500/10 bg-[#060e0a]/50 px-3 py-2 text-xs font-semibold text-emerald-300/80 focus:outline-none" value="Auto-generated" readonly>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Record ID</label>
+                            <input type="text" id="record-idx" class="w-full rounded-lg border border-sky-500/10 bg-[#060e1a]/50 px-3 py-2 text-xs font-semibold text-sky-300/80 focus:outline-none" value="Auto-generated" readonly>
                         </div>
 
                         <!-- Equipment Type -->
                         <div>
-                            <label for="equipment-type" class="block text-[10px] font-bold uppercase tracking-wider text-emerald-300/70 mb-1">Equipment Type <span class="text-rose-300">*</span></label>
-                            <select id="equipment-type" onchange="onEquipmentTypeChange()" class="w-full rounded-lg border border-emerald-500/20 bg-[#0c1a15] px-3 py-2 text-xs text-white shadow-sm transition focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400 cursor-pointer" required>
+                            <label for="equipment-type" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Equipment Type <span class="text-rose-500">*</span></label>
+                            <select id="equipment-type" onchange="onEquipmentTypeChange()" class="w-full rounded-lg border border-sky-500/20 bg-slate-900 px-3 py-2 text-xs text-white shadow-sm transition focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400 cursor-pointer" required>
                                 <option value="" disabled selected class="text-slate-400">Select type...</option>
                                 <option value="Blade">Blade</option>
                                 <option value="Matrix 120">Matrix 120</option>
@@ -145,21 +139,21 @@
 
                         <!-- Part Number -->
                         <div>
-                            <label for="part-number" class="block text-[10px] font-bold uppercase tracking-wider text-emerald-300/70 mb-1">Part Number (PN) <span class="text-rose-300">*</span></label>
-                            <input type="text" id="part-number" placeholder="Ex: 937900120" class="w-full rounded-lg border border-emerald-500/20 bg-[#0c1a15] px-3 py-2 text-xs text-white shadow-sm transition focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400" required>
+                            <label for="part-number" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Part Number (PN) <span class="text-rose-500">*</span></label>
+                            <input type="text" id="part-number" placeholder="Ex: 937900120" class="w-full rounded-lg border border-sky-500/20 bg-slate-900 px-3 py-2 text-xs text-white shadow-sm transition focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400" required>
                         </div>
 
                         <!-- Description -->
                         <div>
-                            <label for="description" class="block text-[10px] font-bold uppercase tracking-wider text-emerald-300/70 mb-1">Description</label>
-                            <input type="text" id="description" placeholder="Ex: M12 Power Cable..." class="w-full rounded-lg border border-emerald-500/20 bg-[#0c1a15] px-3 py-2 text-xs text-white shadow-sm transition focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400">
+                            <label for="description" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Description</label>
+                            <input type="text" id="description" placeholder="Ex: M12 Power Cable..." class="w-full rounded-lg border border-sky-500/20 bg-slate-900 px-3 py-2 text-xs text-white shadow-sm transition focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400">
                         </div>
 
                         <!-- Serial Number -->
                         <div>
-                            <label for="serial-number" class="block text-[10px] font-bold uppercase tracking-wider text-emerald-300/70 mb-1">Serial Number (SN) <span id="sn-required-star" class="text-rose-300">*</span></label>
+                            <label for="serial-number" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Serial Number (SN) <span id="sn-required-star" class="text-rose-500">*</span></label>
                             <div class="relative">
-                                <input type="text" id="serial-number" list="sn-list" placeholder="Enter SN or choose..." class="w-full rounded-lg border border-emerald-500/20 bg-[#0c1a15] px-3 py-2 text-xs text-white shadow-sm transition focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400" required>
+                                <input type="text" id="serial-number" list="sn-list" placeholder="Enter SN or choose..." class="w-full rounded-lg border border-sky-500/20 bg-slate-900 px-3 py-2 text-xs text-white shadow-sm transition focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400" required>
                                 <datalist id="sn-list">
                                 </datalist>
                             </div>
@@ -167,9 +161,9 @@
 
                         <!-- Location -->
                         <div>
-                            <label for="location" class="block text-[10px] font-bold uppercase tracking-wider text-emerald-300/70 mb-1">Location <span class="text-rose-300">*</span></label>
+                            <label for="location" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Location <span class="text-rose-500">*</span></label>
                             <div class="relative">
-                                <input type="text" id="location" list="location-list" placeholder="Enter location..." class="w-full rounded-lg border border-emerald-500/20 bg-[#0c1a15] px-3 py-2 text-xs text-white shadow-sm transition focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400" required>
+                                <input type="text" id="location" list="location-list" placeholder="Enter location..." class="w-full rounded-lg border border-sky-500/20 bg-slate-900 px-3 py-2 text-xs text-white shadow-sm transition focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400" required>
                                 <datalist id="location-list">
                                 </datalist>
                             </div>
@@ -177,19 +171,19 @@
 
                         <!-- Loan Return Date -->
                         <div>
-                            <label for="loan-return-option" class="block text-[10px] font-bold uppercase tracking-wider text-emerald-300/70 mb-1">Loan Return Date</label>
+                            <label for="loan-return-option" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Loan Return Date</label>
                             <div class="flex flex-col gap-2">
-                                <select id="loan-return-option" onchange="toggleLoanDateField()" class="w-full rounded-lg border border-emerald-500/20 bg-[#0c1a15] px-3 py-2 text-xs text-white shadow-sm focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400 cursor-pointer">
+                                <select id="loan-return-option" onchange="toggleLoanDateField()" class="w-full rounded-lg border border-sky-500/20 bg-slate-900 px-3 py-2 text-xs text-white shadow-sm focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400 cursor-pointer">
                                     <option value="NA" class="text-slate-400">N/A (No Loan)</option>
                                     <option value="1W">1 Week Preset</option>
                                     <option value="2W">2 Weeks Preset</option>
                                     <option value="DATE">Manual Date selection...</option>
                                 </select>
-                                <input type="date" id="loan-return-date" class="hidden w-full rounded-lg border border-emerald-500/20 bg-[#0c1a15] px-3 py-2 text-xs text-white shadow-sm transition focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400 cursor-pointer">
+                                <input type="date" id="loan-return-date" class="hidden w-full rounded-lg border border-sky-500/20 bg-slate-900 px-3 py-2 text-xs text-white shadow-sm transition focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400 cursor-pointer">
                             </div>
                         </div>
 
-                        <button type="submit" id="btn-submit" class="w-full inline-flex items-center justify-center space-x-1.5 rounded-lg bg-emerald-500 px-4 py-2.5 text-xs font-bold text-[#0c1a15] shadow-sm transition hover:bg-emerald-400 focus:outline-none cursor-pointer">
+                        <button type="submit" id="btn-submit" class="w-full inline-flex items-center justify-center space-x-1.5 rounded-lg bg-sky-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-sky-500 focus:outline-none cursor-pointer">
                             <i class="fa-solid fa-plus-circle"></i>
                             <span id="submit-btn-text">Add to List</span>
                         </button>
@@ -197,22 +191,22 @@
                 </div>
 
                 <!-- Excel Import Card -->
-                <div class="rounded-xl border border-emerald-500/15 bg-emerald-950/30 p-5 shadow-md backdrop-blur">
-                    <div class="mb-4 flex items-center gap-1.5 border-b border-emerald-500/15 pb-3">
-                        <i class="fa-solid fa-file-excel text-emerald-400"></i>
-                        <h2 class="text-xs font-bold text-emerald-300 uppercase tracking-wider">Excel Import (XLS / XLSX)</h2>
+                <div class="rounded-xl border border-sky-500/15 bg-slate-900/50 p-5 shadow-md backdrop-blur">
+                    <div class="mb-4 flex items-center gap-1.5 border-b border-sky-500/15 pb-3">
+                        <i class="fa-solid fa-file-excel text-sky-400"></i>
+                        <h2 class="text-xs font-bold text-sky-300 uppercase tracking-wider">Excel Import (XLS / XLSX)</h2>
                     </div>
                     <div class="space-y-3">
-                        <p class="text-[11px] text-emerald-200/70 leading-relaxed">
+                        <p class="text-[11px] text-slate-400 leading-relaxed">
                             Upload an Excel spreadsheet with the columns:
                             <strong class="font-bold block text-white">Part Number, Description, Serial Number, Location, Loan Return Date</strong>
                         </p>
                         <div class="relative flex items-center justify-center w-full">
-                            <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-emerald-500/10 rounded-xl cursor-pointer hover:bg-emerald-950/20 hover:border-emerald-500 transition">
+                            <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-sky-500/10 rounded-xl cursor-pointer hover:bg-slate-900/20 hover:border-sky-500 transition">
                                 <div class="flex flex-col items-center justify-center pt-3 pb-4">
-                                    <i class="fa-solid fa-cloud-arrow-up text-lg text-emerald-300 mb-1"></i>
-                                    <p class="text-[11px] text-emerald-200 font-semibold">Choose Excel File</p>
-                                    <p class="text-[9px] text-emerald-300/60">XLS, XLSX up to 10MB</p>
+                                    <i class="fa-solid fa-cloud-arrow-up text-lg text-sky-300 mb-1"></i>
+                                    <p class="text-[11px] text-slate-300 font-semibold">Choose Excel File</p>
+                                    <p class="text-[9px] text-slate-400">XLS, XLSX up to 10MB</p>
                                 </div>
                                 <input type="file" id="excel-file-input" class="hidden" accept=".xlsx, .xls" onchange="handleExcelImport(event)" />
                             </label>
@@ -223,23 +217,23 @@
 
             <!-- Right Side: Equipment Recordings Table -->
             <div class="lg:col-span-3">
-                <div class="rounded-2xl border border-emerald-500/15 bg-emerald-950/20 shadow-lg overflow-hidden backdrop-blur">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-emerald-500/15 bg-[#060e0a]/40 p-4 sm:p-6 gap-4">
+                <div class="rounded-2xl border border-sky-500/15 bg-slate-900/40 shadow-lg overflow-hidden backdrop-blur">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-sky-500/15 bg-[#060e1a]/40 p-4 sm:p-6 gap-4">
                         <div>
                             <h2 class="text-base font-bold text-white tracking-wide">Equipment Recordings</h2>
-                            <p class="text-xs text-emerald-200/70">Current equipment records synchronized locally</p>
+                            <p class="text-xs text-slate-400">Current equipment records synchronized locally</p>
                         </div>
                         <!-- Search Bar -->
                         <div class="relative max-w-xs w-full">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-300 text-sm"></i>
-                            <input type="text" id="search-input" oninput="renderRecords()" placeholder="Search records..." class="w-full rounded-xl border border-emerald-500/20 bg-[#0c1a15] pl-10 pr-4 py-2 text-xs text-white shadow-sm transition focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-sky-300 text-sm"></i>
+                            <input type="text" id="search-input" oninput="renderRecords()" placeholder="Search records..." class="w-full rounded-xl border border-sky-500/20 bg-slate-900 pl-10 pr-4 py-2 text-xs text-white shadow-sm transition focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400">
                         </div>
                     </div>
 
                     <!-- Responsive Table Wrapper -->
                     <div class="w-full overflow-x-auto">
-                        <table class="w-full min-w-[850px] border-collapse text-left text-sm text-emerald-100/90">
-                            <thead class="bg-[#060e0a] border-b border-emerald-500/15 text-xs font-bold uppercase tracking-wider text-emerald-300">
+                        <table class="w-full min-w-[850px] border-collapse text-left text-sm text-slate-200">
+                            <thead class="bg-[#060e1a] border-b border-sky-500/15 text-xs font-bold uppercase tracking-wider text-sky-300">
                                 <tr>
                                     <th class="px-4 sm:px-6 py-4 font-bold text-center w-14">No.</th>
                                     <th class="px-4 sm:px-6 py-4">Equipment Type</th>
@@ -251,18 +245,18 @@
                                     <th class="px-4 sm:px-6 py-4 text-center w-28">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="records-tbody" class="divide-y divide-emerald-500/10">
+                            <tbody id="records-tbody" class="divide-y divide-sky-500/10">
                             </tbody>
                         </table>
                     </div>
 
                     <!-- Empty state -->
-                    <div id="empty-state" class="hidden flex flex-col items-center justify-center p-12 text-center bg-[#060e0a]/30">
-                        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-950/40 text-emerald-400 mb-4">
+                    <div id="empty-state" class="hidden flex flex-col items-center justify-center p-12 text-center bg-[#060e1a]/30">
+                        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-900/40 text-sky-400 mb-4">
                             <i class="fa-solid fa-box-open text-2xl"></i>
                         </div>
                         <h3 class="text-sm font-bold text-white">No records found</h3>
-                        <p class="text-xs text-emerald-200/50 mt-1">Enter details on the left form or upload an Excel file to populate recordings.</p>
+                        <p class="text-xs text-slate-400 mt-1">Enter details on the left form or upload an Excel file to populate recordings.</p>
                     </div>
                 </div>
             </div>
@@ -271,192 +265,273 @@
     </main>
 
     <!-- Settings Modal -->
-    <div id="settings-modal" class="fixed inset-0 z-50 hidden bg-[#060e0a]/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="w-full max-w-md bg-[#0c1a15] rounded-2xl border border-emerald-500/20 shadow-2xl p-6 relative animate-in fade-in zoom-in-95 duration-200">
-            <button onclick="toggleSettingsModal(false)" class="absolute right-4 top-4 text-emerald-300 hover:text-white cursor-pointer">
+    <div id="settings-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-slate-900 rounded-2xl border border-sky-500/20 shadow-2xl p-6 relative animate-in fade-in zoom-in-95 duration-200">
+            <button onclick="toggleSettingsModal(false)" class="absolute right-4 top-4 text-sky-300 hover:text-white cursor-pointer">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
             <h3 class="text-base font-bold text-white mb-2 flex items-center gap-2">
-                <i class="fa-solid fa-gears text-emerald-400"></i>
+                <i class="fa-solid fa-gears text-sky-400"></i>
                 <span>Cloud Connection Settings</span>
             </h3>
-            <p class="text-xs text-emerald-200/70 mb-4">Provide the URL for your external Cloudflare Worker API to read and save data in the cloud.</p>
+            <p class="text-xs text-slate-400 mb-4">Provide the URL for your external Cloudflare Worker API to read and save data in the cloud.</p>
 
             <div class="space-y-4">
                 <div>
-                    <label for="settings-api-url" class="block text-[10px] font-bold uppercase tracking-wider text-emerald-200/70 mb-1">Cloud API URL</label>
-                    <input type="url" id="settings-api-url" placeholder="https://config-api.name.workers.dev" class="w-full rounded-lg border border-emerald-500/20 bg-[#060e0a]/80 px-3 py-2 text-xs text-white shadow-sm focus:border-emerald-400 focus:outline-none">
+                    <label for="settings-api-url" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Cloud API URL</label>
+                    <input type="url" id="settings-api-url" placeholder="https://config-api.name.workers.dev" class="w-full rounded-lg border border-sky-500/20 bg-[#060e1a]/80 px-3 py-2 text-xs text-white shadow-sm focus:border-orange-500 focus:outline-none">
                 </div>
                 <div>
-                    <label for="settings-api-key" class="block text-[10px] font-bold uppercase tracking-wider text-emerald-200/70 mb-1">Security Key / Password (Optional)</label>
-                    <input type="password" id="settings-api-key" placeholder="API Access Password" class="w-full rounded-lg border border-emerald-500/20 bg-[#060e0a]/80 px-3 py-2 text-xs text-white shadow-sm focus:border-emerald-400 focus:outline-none">
+                    <label for="settings-api-key" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Security Key / Password (Optional)</label>
+                    <input type="password" id="settings-api-key" placeholder="API Access Password" class="w-full rounded-lg border border-sky-500/20 bg-[#060e1a]/80 px-3 py-2 text-xs text-white shadow-sm focus:border-orange-500 focus:outline-none">
                 </div>
             </div>
 
             <div class="mt-6 flex items-center justify-end space-x-3">
-                <button onclick="toggleSettingsModal(false)" class="px-4 py-2 text-xs font-semibold text-emerald-300 hover:text-white cursor-pointer">Cancel</button>
-                <button onclick="saveSettings()" class="px-4 py-2 rounded-lg bg-emerald-500 text-xs font-semibold text-[#0c1a15] shadow-md hover:bg-emerald-400 cursor-pointer">Save Settings</button>
+                <button onclick="toggleSettingsModal(false)" class="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white cursor-pointer">Cancel</button>
+                <button onclick="saveSettings()" class="px-4 py-2 rounded-lg bg-sky-600 text-xs font-semibold text-white shadow-md hover:bg-sky-500 cursor-pointer">Save Settings</button>
             </div>
         </div>
     </div>
 
-    <!-- Script Dynamic Context & Synchronizer -->
+    <!-- Embedded Configuration JSON State block -->
+    <script id="config-data" type="application/json">
+    {
+      "serialNumbers": {
+        "Blade": ["BL-9921", "BL-1034", "BL-4421"],
+        "Matrix 120": ["M120-8321", "M120-1092", "M120-4552"],
+        "Matrix 220": ["M220-3321", "M220-4491", "M220-7711"],
+        "Matrix 320 2MPx": ["M320_2M-9021", "M320_2M-1123", "M320_2M-8843"],
+        "Matrix 320 5MPx": ["M320_5M-5511", "M320_5M-6622", "M320_5M-7733"],
+        "Thor": ["TH-1211", "TH-4322", "TH-9081"],
+        "Accesorii": [],
+        "Cabluri": []
+      },
+      "locations": ["Zona A - Asamblare", "Zona B - Sortare", "Zona C - Ambalare", "Depozit Central", "Laborator Calitate"],
+      "equipmentTypes": ["Blade", "Matrix 120", "Matrix 220", "Matrix 320 2MPx", "Matrix 320 5MPx", "Thor", "Accesorii", "Cabluri"],
+      "records": [
+        {
+          "id": 1,
+          "equipmentType": "Matrix 320 5MPx",
+          "partNumber": "937900120",
+          "description": "Primary assembly line scanner",
+          "serialNumber": "M320_5M-5511",
+          "location": "Zona B - Sortare",
+          "loanReturnDate": "N/A"
+        },
+        {
+          "id": 2,
+          "equipmentType": "Thor",
+          "partNumber": "93A050043",
+          "description": "Forklift computer terminal",
+          "serialNumber": "TH-1211",
+          "location": "Zona A - Asamblare",
+          "loanReturnDate": "2023-11-20"
+        }
+      ]
+    }
+    </script>
+
+    <!-- Script Dynamic Context & Synchronizer (V2.0.0 Refactor) -->
     <script>
-        // Standard template configuration structure if no data exists locally or in API
-        var DEFAULT_TEMPLATE = {
-            "serialNumbers": {
-                "Blade": ["BL-9921", "BL-1034", "BL-4421"],
-                "Matrix 120": ["M120-8321", "M120-1092", "M120-4552"],
-                "Matrix 220": ["M220-3321", "M220-4491", "M220-7711"],
-                "Matrix 320 2MPx": ["M320_2M-9021", "M320_2M-1123", "M320_2M-8843"],
-                "Matrix 320 5MPx": ["M320_5M-5511", "M320_5M-6622", "M320_5M-7733"],
-                "Thor": ["TH-1211", "TH-4322", "TH-9081"],
-                "Accesorii": [],
-                "Cabluri": []
-            },
-            "locations": ["Zona A - Asamblare", "Zona B - Sortare", "Zona C - Ambalare", "Depozit Central", "Laborator Calitate"],
-            "equipmentTypes": ["Blade", "Matrix 120", "Matrix 220", "Matrix 320 2MPx", "Matrix 320 5MPx", "Thor", "Accesorii", "Cabluri"],
-            "records": [
-                {
-                    "id": 1,
-                    "equipmentType": "Matrix 320 5MPx",
-                    "partNumber": "937900120",
-                    "description": "Primary assembly line scanner",
-                    "serialNumber": "M320_5M-5511",
-                    "location": "Zona B - Sortare",
-                    "loanReturnDate": "N/A"
-                },
-                {
-                    "id": 2,
-                    "equipmentType": "Thor",
-                    "partNumber": "93A050043",
-                    "description": "Forklift computer terminal",
-                    "serialNumber": "TH-1211",
-                    "location": "Zona A - Asamblare",
-                    "loanReturnDate": "2023-11-20" // Expired loan example
+        // Centralized DOM cache to avoid repetitive document.getElementById lookups
+        let DOM = {};
+
+        // Centralized State Management / Data Store Class using ES6 let/const and Arrow Functions
+        class ConfigurationStore {
+            constructor() {
+                this.defaultTemplate = JSON.parse(document.getElementById('config-data').textContent);
+                this.config = this.defaultTemplate;
+                this.localBackupKey = "hosted_local_backup";
+                this.apiUrlKey = "hosted_api_url";
+                this.apiKeyKey = "hosted_api_key";
+            }
+
+            getApiUrl() {
+                return localStorage.getItem(this.apiUrlKey) || "";
+            }
+
+            getApiKey() {
+                return localStorage.getItem(this.apiKeyKey) || "";
+            }
+
+            setApiCredentials(url, key) {
+                localStorage.setItem(this.apiUrlKey, url);
+                localStorage.setItem(this.apiKeyKey, key);
+            }
+
+            loadBackup() {
+                const localData = localStorage.getItem(this.localBackupKey);
+                if (localData) {
+                    try {
+                        this.config = JSON.parse(localData);
+                    } catch (e) {
+                        this.config = this.defaultTemplate;
+                    }
+                } else {
+                    this.config = this.defaultTemplate;
                 }
-            ]
-        };
+            }
 
-        var config = DEFAULT_TEMPLATE;
+            saveLocalBackup() {
+                localStorage.setItem(this.localBackupKey, JSON.stringify(this.config));
+            }
+        }
 
-        // Initialization
-        document.addEventListener("DOMContentLoaded", function() {
+        const Store = new ConfigurationStore();
+
+        // Initial setup on boot
+        document.addEventListener("DOMContentLoaded", () => {
+            // Cache DOM elements
+            DOM = {
+                form: document.getElementById("equipment-form"),
+                editId: document.getElementById("edit-id"),
+                recordIdx: document.getElementById("record-idx"),
+                equipmentType: document.getElementById("equipment-type"),
+                partNumber: document.getElementById("part-number"),
+                description: document.getElementById("description"),
+                serialNumber: document.getElementById("serial-number"),
+                location: document.getElementById("location"),
+                loanReturnOption: document.getElementById("loan-return-option"),
+                loanReturnDate: document.getElementById("loan-return-date"),
+                snRequiredStar: document.getElementById("sn-required-star"),
+                snList: document.getElementById("sn-list"),
+                locationList: document.getElementById("location-list"),
+                recordsTbody: document.getElementById("records-tbody"),
+                emptyState: document.getElementById("empty-state"),
+                searchInput: document.getElementById("search-input"),
+                settingsApiUrl: document.getElementById("settings-api-url"),
+                settingsApiKey: document.getElementById("settings-api-key"),
+                settingsModal: document.getElementById("settings-modal"),
+                formTitle: document.getElementById("form-title"),
+                submitBtnText: document.getElementById("submit-btn-text"),
+                btnSubmit: document.getElementById("btn-submit"),
+                btnCancelEdit: document.getElementById("btn-cancel-edit"),
+                statTotalRecords: document.getElementById("stat-total-records"),
+                statExpiredLoans: document.getElementById("stat-expired-loans"),
+                statUniqueLocations: document.getElementById("stat-unique-locations"),
+                expiredLoansBg: document.getElementById("expired-loans-bg"),
+                syncStatus: document.getElementById("sync-status"),
+                apiAlertBanner: document.getElementById("api-alert-banner")
+            };
+
             loadSettings();
             fetchConfiguration();
         });
 
-        // Load settings from localStorage
-        function loadSettings() {
-            var apiUrl = localStorage.getItem("hosted_api_url") || "";
-            var apiKey = localStorage.getItem("hosted_api_key") || "";
-            document.getElementById("settings-api-url").value = apiUrl;
-            document.getElementById("settings-api-key").value = apiKey;
+        // Connection loading and configuration
+        const loadSettings = () => {
+            const apiUrl = Store.getApiUrl();
+            const apiKey = Store.getApiKey();
+            DOM.settingsApiUrl.value = apiUrl;
+            DOM.settingsApiKey.value = apiKey;
 
             if (apiUrl) {
-                document.getElementById("api-alert-banner").classList.add("hidden");
+                DOM.apiAlertBanner.classList.add("hidden");
             } else {
-                document.getElementById("api-alert-banner").classList.remove("hidden");
+                DOM.apiAlertBanner.classList.remove("hidden");
             }
-        }
+        };
 
-        // Toggle modal visibility
-        function toggleSettingsModal(visible) {
-            var modal = document.getElementById("settings-modal");
+        const toggleSettingsModal = (visible) => {
             if (visible) {
-                modal.classList.remove("hidden");
+                DOM.settingsModal.classList.remove("hidden");
             } else {
-                modal.classList.add("hidden");
+                DOM.settingsModal.classList.add("hidden");
             }
-        }
+        };
 
-        // Save connection parameters in local client space
-        function saveSettings() {
-            var url = document.getElementById("settings-api-url").value.trim();
-            var key = document.getElementById("settings-api-key").value;
-
-            localStorage.setItem("hosted_api_url", url);
-            localStorage.setItem("hosted_api_key", key);
-
+        const saveSettings = () => {
+            const url = DOM.settingsApiUrl.value.trim();
+            const key = DOM.settingsApiKey.value;
+            Store.setApiCredentials(url, key);
             toggleSettingsModal(false);
             loadSettings();
-            fetchConfiguration(); // pull data from the new host URL
-        }
+            fetchConfiguration();
+        };
 
-        // Helper to format Date objects to YYYY-MM-DD
-        function formatDateToYYYYMMDD(date) {
-            var mm = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1);
-            var dd = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-            return date.getFullYear() + "-" + mm + "-" + dd;
-        }
-
-        // Toggle visibility and presets of the HTML5 date input depending on whether N/A or Set Date is picked
-        function toggleLoanDateField() {
-            var option = document.getElementById("loan-return-option").value;
-            var dateInput = document.getElementById("loan-return-date");
-
+        // Static toggle functions
+        const toggleLoanDateField = () => {
+            const option = DOM.loanReturnOption.value;
             if (option === "NA") {
-                dateInput.classList.add("hidden");
-                dateInput.value = "";
+                DOM.loanReturnDate.classList.add("hidden");
+                DOM.loanReturnDate.value = "";
             } else if (option === "1W") {
-                dateInput.classList.add("hidden");
-                var futureDate = new Date();
+                DOM.loanReturnDate.classList.add("hidden");
+                const futureDate = new Date();
                 futureDate.setDate(futureDate.getDate() + 7);
-                dateInput.value = formatDateToYYYYMMDD(futureDate);
+                DOM.loanReturnDate.value = formatDateToYYYYMMDD(futureDate);
             } else if (option === "2W") {
-                dateInput.classList.add("hidden");
-                var futureDate = new Date();
+                DOM.loanReturnDate.classList.add("hidden");
+                const futureDate = new Date();
                 futureDate.setDate(futureDate.getDate() + 14);
-                dateInput.value = formatDateToYYYYMMDD(futureDate);
+                DOM.loanReturnDate.value = formatDateToYYYYMMDD(futureDate);
             } else if (option === "DATE") {
-                dateInput.classList.remove("hidden");
-                if (!dateInput.value) {
-                    dateInput.value = formatDateToYYYYMMDD(new Date());
+                DOM.loanReturnDate.classList.remove("hidden");
+                if (!DOM.loanReturnDate.value) {
+                    DOM.loanReturnDate.value = formatDateToYYYYMMDD(new Date());
                 }
             }
-        }
+        };
 
-        // Helper to check if a specific loan date string has expired compared to the current system date
-        function isLoanExpired(dateStr) {
+        const formatDateToYYYYMMDD = (date) => {
+            const mm = (date.getMonth() + 1) < 10 ? `0${date.getMonth() + 1}` : (date.getMonth() + 1);
+            const dd = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+            return `${date.getFullYear()}-${mm}-${dd}`;
+        };
+
+        const isLoanExpired = (dateStr) => {
             if (!dateStr || dateStr === "N/A" || dateStr === "NA") return false;
-
-            var loanDate = new Date(dateStr);
+            const loanDate = new Date(dateStr);
             if (isNaN(loanDate.getTime())) return false;
-
-            var today = new Date();
+            const today = new Date();
             today.setHours(0,0,0,0);
             loanDate.setHours(0,0,0,0);
-
             return loanDate < today;
-        }
+        };
 
-        // Load configuration from either the REST Cloud API or LocalStorage
-        function fetchConfiguration() {
-            var apiUrl = localStorage.getItem("hosted_api_url");
-            var apiKey = localStorage.getItem("hosted_api_key");
+        const setSyncStatus = (type, label) => {
+            let dotColor = "bg-slate-400";
+            if (type === "loading") {
+                DOM.syncStatus.className = "inline-flex items-center gap-1.5 rounded-full bg-sky-950/60 text-sky-300 ring-1 ring-inset ring-sky-500/20";
+                dotColor = "bg-sky-400 animate-pulse";
+            } else if (type === "cloud") {
+                DOM.syncStatus.className = "inline-flex items-center gap-1.5 rounded-full bg-sky-900/40 text-sky-200 ring-1 ring-inset ring-sky-500/30";
+                dotColor = "bg-sky-400";
+            } else {
+                DOM.syncStatus.className = "inline-flex items-center gap-1.5 rounded-full bg-[#1e293b]/50 text-slate-300 ring-1 ring-inset ring-slate-500/20";
+                dotColor = "bg-slate-500";
+            }
+            DOM.syncStatus.innerHTML = `<span class="h-1.5 w-1.5 rounded-full ${dotColor}"></span><span>${label}</span>`;
+        };
+
+        // Fetch / save data synchronizations wrapped cleanly in ES6+
+        const fetchConfiguration = () => {
+            const apiUrl = Store.getApiUrl();
+            const apiKey = Store.getApiKey();
 
             setSyncStatus("loading", "Synchronizing...");
 
             if (apiUrl) {
-                var headers = { "Content-Type": "application/json" };
+                const headers = { "Content-Type": "application/json" };
                 if (apiKey) {
-                    headers["Authorization"] = "Bearer " + apiKey;
+                    headers["Authorization"] = `Bearer ${apiKey}`;
                 }
 
-                fetch(apiUrl, { method: "GET", headers: headers })
-                .then(function(res) {
-                    if (!res.ok) throw new Error("HTTP error " + res.status);
+                fetch(apiUrl, { method: "GET", headers })
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
                     return res.json();
                 })
-                .then(function(data) {
-                    config = data;
-                    localStorage.setItem("hosted_local_backup", JSON.stringify(data));
+                .then(data => {
+                    Store.config = data;
+                    Store.saveLocalBackup();
                     setSyncStatus("cloud", "Connected to Cloud");
                     populateLocationsDatalist();
                     onEquipmentTypeChange();
                     renderRecords();
                 })
-                .catch(function(err) {
+                .catch(err => {
                     console.error("Fetch failed. Loading backup", err);
                     setSyncStatus("offline", "Cloud Error (Offline Mode)");
                     loadLocalData();
@@ -465,51 +540,40 @@
                 setSyncStatus("offline", "Local Mode (Offline)");
                 loadLocalData();
             }
-        }
+        };
 
-        // Fetch back up locally
-        function loadLocalData() {
-            var localData = localStorage.getItem("hosted_local_backup");
-            if (localData) {
-                try {
-                    config = JSON.parse(localData);
-                } catch (e) {
-                    config = DEFAULT_TEMPLATE;
-                }
-            } else {
-                config = DEFAULT_TEMPLATE;
-            }
+        const loadLocalData = () => {
+            Store.loadBackup();
             populateLocationsDatalist();
             onEquipmentTypeChange();
             renderRecords();
-        }
+        };
 
-        // Save Configuration back to REST Cloud API or save locally in backup
-        function saveConfiguration() {
-            var apiUrl = localStorage.getItem("hosted_api_url");
-            var apiKey = localStorage.getItem("hosted_api_key");
+        const saveConfiguration = () => {
+            const apiUrl = Store.getApiUrl();
+            const apiKey = Store.getApiKey();
 
-            localStorage.setItem("hosted_local_backup", JSON.stringify(config));
+            Store.saveLocalBackup();
 
             if (apiUrl) {
                 setSyncStatus("loading", "Saving to Cloud...");
 
-                var headers = { "Content-Type": "application/json" };
+                const headers = { "Content-Type": "application/json" };
                 if (apiKey) {
-                    headers["Authorization"] = "Bearer " + apiKey;
+                    headers["Authorization"] = `Bearer ${apiKey}`;
                 }
 
                 fetch(apiUrl, {
                     method: "POST",
-                    headers: headers,
-                    body: JSON.stringify(config)
+                    headers,
+                    body: JSON.stringify(Store.config)
                 })
-                .then(function(res) {
-                    if (!res.ok) throw new Error("HTTP error " + res.status);
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
                     setSyncStatus("cloud", "Saved in Cloud");
                     alert("Configuration synchronized successfully to Cloudflare!");
                 })
-                .catch(function(err) {
+                .catch(err => {
                     console.error("Save to cloud failed", err);
                     setSyncStatus("offline", "Cloud Saving Error");
                     alert("Cloud sync failed! Configuration was backed up locally in your browser.");
@@ -518,221 +582,196 @@
                 setSyncStatus("offline", "Saved Locally (Offline)");
                 alert("Configuration saved locally in browser (LocalStorage).");
             }
-        }
+        };
 
-        // Update top-right synchronizer badge status
-        function setSyncStatus(type, label) {
-            var badge = document.getElementById("sync-status");
+        // Unified CRUD Operations Module (Step 4 of plan)
+        const CRUD = {
+            addOrUpdate: (editIdStr, payload) => {
+                const { equipmentType, partNumber, description, serialNumber, location, loanReturnDate } = payload;
 
-            var dotColor = "bg-slate-400";
-            if (type === "loading") {
-                badge.className = "inline-flex items-center gap-1.5 rounded-full bg-teal-950/60 text-teal-300 ring-1 ring-inset ring-teal-500/20";
-                dotColor = "bg-teal-400 animate-pulse";
-            } else if (type === "cloud") {
-                badge.className = "inline-flex items-center gap-1.5 rounded-full bg-emerald-950/60 text-emerald-300 ring-1 ring-inset ring-emerald-500/30";
-                dotColor = "bg-emerald-400";
-            } else {
-                badge.className = "inline-flex items-center gap-1.5 rounded-full bg-emerald-950/40 text-emerald-300/80 ring-1 ring-inset ring-emerald-500/20";
-                dotColor = "bg-emerald-400";
+                // Handle location dynamic append
+                if (!Store.config.locations.includes(location)) {
+                    Store.config.locations.push(location);
+                    populateLocationsDatalist();
+                }
+
+                // Handle SN dynamic autocomplete append
+                if (!Store.config.serialNumbers[equipmentType]) {
+                    Store.config.serialNumbers[equipmentType] = [];
+                }
+                if (serialNumber !== "N/A" && !Store.config.serialNumbers[equipmentType].includes(serialNumber)) {
+                    Store.config.serialNumbers[equipmentType].push(serialNumber);
+                }
+
+                if (editIdStr) {
+                    // Update matching element
+                    const idNum = parseInt(editIdStr, 10);
+                    const index = Store.config.records.findIndex(r => r.id === idNum);
+                    if (index !== -1) {
+                        Store.config.records[index] = { id: idNum, ...payload };
+                    }
+                } else {
+                    // Insert new record
+                    const maxId = Store.config.records.reduce((max, r) => r.id > max ? r.id : max, 0);
+                    Store.config.records.push({ id: maxId + 1, ...payload });
+                }
+
+                Store.saveLocalBackup();
+            },
+
+            delete: (id) => {
+                Store.config.records = Store.config.records.filter(r => r.id !== id);
+                Store.saveLocalBackup();
             }
-            badge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full ' + dotColor + '"></span><span>' + label + '</span>';
-        }
+        };
 
         // Dynamic update of datalist for Serial Numbers depending on Equipment Type selection
-        function onEquipmentTypeChange() {
-            var selectedType = document.getElementById("equipment-type").value;
-            var snDatalist = document.getElementById("sn-list");
-            snDatalist.innerHTML = "";
+        const onEquipmentTypeChange = () => {
+            const selectedType = DOM.equipmentType.value;
+            DOM.snList.innerHTML = "";
 
-            if (selectedType && config.serialNumbers[selectedType]) {
-                var suggestedSNs = config.serialNumbers[selectedType];
-                for (var i = 0; i < suggestedSNs.length; i++) {
-                    var option = document.createElement("option");
+            if (selectedType && Store.config.serialNumbers[selectedType]) {
+                const suggestedSNs = Store.config.serialNumbers[selectedType];
+                for (let i = 0; i < suggestedSNs.length; i++) {
+                    const option = document.createElement("option");
                     option.value = suggestedSNs[i];
-                    snDatalist.appendChild(option);
+                    DOM.snList.appendChild(option);
                 }
             }
 
-            var snRequiredStar = document.getElementById("sn-required-star");
-            var snInput = document.getElementById("serial-number");
-
             if (selectedType === "Cabluri" || selectedType === "Accesorii") {
-                snRequiredStar.classList.add("hidden");
-                snInput.removeAttribute("required");
-                snInput.placeholder = "Enter SN or choose (Optional)...";
+                DOM.snRequiredStar.classList.add("hidden");
+                DOM.serialNumber.removeAttribute("required");
+                DOM.serialNumber.placeholder = "Enter SN or choose (Optional)...";
             } else {
-                snRequiredStar.classList.remove("hidden");
-                snInput.setAttribute("required", "required");
-                snInput.placeholder = "Enter SN or choose...";
+                DOM.snRequiredStar.classList.remove("hidden");
+                DOM.serialNumber.setAttribute("required", "required");
+                DOM.serialNumber.placeholder = "Enter SN or choose...";
             }
-        }
+        };
 
-        // Populates locations datalist options
-        function populateLocationsDatalist() {
-            var locationDatalist = document.getElementById("location-list");
-            locationDatalist.innerHTML = "";
-            for (var i = 0; i < config.locations.length; i++) {
-                var option = document.createElement("option");
-                option.value = config.locations[i];
-                locationDatalist.appendChild(option);
+        const populateLocationsDatalist = () => {
+            DOM.locationList.innerHTML = "";
+            for (let i = 0; i < Store.config.locations.length; i++) {
+                const option = document.createElement("option");
+                option.value = Store.config.locations[i];
+                DOM.locationList.appendChild(option);
             }
-        }
+        };
 
-        // Render table (Pastel SUSE Theme)
-        function renderRecords() {
-            var tbody = document.getElementById("records-tbody");
-            var emptyState = document.getElementById("empty-state");
-            var searchTerm = document.getElementById("search-input").value.toLowerCase();
+        // Render records in table with pristine clear typography & layout spacing
+        const renderRecords = () => {
+            const searchTerm = DOM.searchInput.value.toLowerCase();
+            DOM.recordsTbody.innerHTML = "";
 
-            tbody.innerHTML = "";
-
-            var filteredRecords = config.records.filter(function(rec) {
-                var desc = rec.description || "";
-                var loanDate = rec.loanReturnDate || "N/A";
-                return rec.equipmentType.toLowerCase().indexOf(searchTerm) !== -1 ||
-                       rec.partNumber.toLowerCase().indexOf(searchTerm) !== -1 ||
-                       desc.toLowerCase().indexOf(searchTerm) !== -1 ||
-                       rec.serialNumber.toLowerCase().indexOf(searchTerm) !== -1 ||
-                       rec.location.toLowerCase().indexOf(searchTerm) !== -1 ||
-                       loanDate.toLowerCase().indexOf(searchTerm) !== -1;
+            const filteredRecords = Store.config.records.filter(rec => {
+                const desc = rec.description || "";
+                const loanDate = rec.loanReturnDate || "N/A";
+                return rec.equipmentType.toLowerCase().includes(searchTerm) ||
+                       rec.partNumber.toLowerCase().includes(searchTerm) ||
+                       desc.toLowerCase().includes(searchTerm) ||
+                       rec.serialNumber.toLowerCase().includes(searchTerm) ||
+                       rec.location.toLowerCase().includes(searchTerm) ||
+                       loanDate.toLowerCase().includes(searchTerm);
             });
 
             if (filteredRecords.length === 0) {
-                emptyState.classList.remove("hidden");
+                DOM.emptyState.classList.remove("hidden");
             } else {
-                emptyState.classList.add("hidden");
+                DOM.emptyState.classList.add("hidden");
             }
 
-            for (var i = 0; i < filteredRecords.length; i++) {
-                var rec = filteredRecords[i];
-                var row = document.createElement("tr");
+            filteredRecords.forEach((rec, i) => {
+                const row = document.createElement("tr");
+                const expired = isLoanExpired(rec.loanReturnDate);
 
-                var expired = isLoanExpired(rec.loanReturnDate);
-
-                // Pastel Row Styling
+                // Pristine Clean Readability Design row background
                 if (expired) {
                     row.className = "bg-rose-950/20 hover:bg-rose-950/30 transition border-b border-rose-500/20 text-rose-300 font-medium";
                 } else {
-                    row.className = "hover:bg-emerald-500/5 transition border-b border-emerald-500/10 text-emerald-100";
+                    row.className = "hover:bg-slate-800/40 transition border-b border-sky-500/10 text-slate-200";
                 }
 
-                var indexCell = document.createElement("td");
-                indexCell.className = "px-4 sm:px-6 py-4 text-center font-bold text-emerald-400";
-                indexCell.textContent = i + 1;
-                row.appendChild(indexCell);
+                // Row columns templates with literal templates
+                row.innerHTML = `
+                    <td class="px-4 sm:px-6 py-4 text-center font-bold ${expired ? 'text-rose-400' : 'text-slate-500'}">${i + 1}</td>
+                    <td class="px-4 sm:px-6 py-4">
+                        <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-semibold ${
+                            rec.equipmentType.includes('Matrix') ? (expired ? 'bg-rose-900/60 text-rose-100' : 'bg-sky-500/20 text-sky-300') :
+                            rec.equipmentType === 'Thor' ? (expired ? 'bg-rose-900/60 text-rose-100' : 'bg-emerald-500/20 text-emerald-300') :
+                            rec.equipmentType === 'Blade' ? (expired ? 'bg-rose-900/60 text-rose-100' : 'bg-amber-500/20 text-amber-300') :
+                            rec.equipmentType === 'Accesorii' ? (expired ? 'bg-rose-900/60 text-rose-100' : 'bg-purple-500/20 text-purple-300') :
+                            expired ? 'bg-rose-900/60 text-rose-100' : 'bg-slate-500/20 text-slate-300'
+                        }">${rec.equipmentType}</span>
+                    </td>
+                    <td class="px-4 sm:px-6 py-4 font-mono text-sm tracking-tight ${expired ? 'text-rose-200 font-semibold' : 'text-sky-200 font-medium'}">${rec.partNumber}</td>
+                    <td class="px-4 sm:px-6 py-4 text-xs max-w-xs truncate ${expired ? 'text-rose-300 font-semibold' : 'text-slate-300'}">${rec.description || '-'}</td>
+                    <td class="px-4 sm:px-6 py-4 font-mono text-sm tracking-tight font-bold ${expired ? 'text-rose-100' : 'text-white'}">${rec.serialNumber || 'N/A'}</td>
+                    <td class="px-4 sm:px-6 py-4">
+                        <span class="inline-flex items-center space-x-1.5 text-xs text-slate-300">
+                            <i class="fa-solid fa-location-dot ${expired ? 'text-rose-400' : 'text-sky-400'}"></i>
+                            <span>${rec.location}</span>
+                        </span>
+                    </td>
+                    <td class="px-4 sm:px-6 py-4 font-semibold text-xs">
+                        ${expired ? `<span class="inline-flex items-center gap-1 text-rose-400"><i class="fa-solid fa-calendar-times"></i> ${rec.loanReturnDate} (EXPIRED)</span>` :
+                          (rec.loanReturnDate && rec.loanReturnDate !== "N/A" && rec.loanReturnDate !== "NA") ? `<span class="inline-flex items-center gap-1 text-emerald-400"><i class="fa-solid fa-calendar-check"></i> ${rec.loanReturnDate}</span>` :
+                          '<span class="text-slate-500">N/A</span>'}
+                    </td>
+                    <td class="px-4 sm:px-6 py-4 text-center whitespace-nowrap space-x-2">
+                        <button onclick="startEdit(${rec.id})" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-sky-500/20 bg-slate-900/60 text-sky-300 shadow-sm transition hover:bg-sky-500/20 hover:text-white cursor-pointer" title="Edit">
+                            <i class="fa-solid fa-pen text-xs"></i>
+                        </button>
+                        <button onclick="deleteRecord(${rec.id})" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-sky-500/20 bg-slate-900/60 text-sky-300 shadow-sm transition hover:bg-rose-900/60 hover:text-white cursor-pointer" title="Delete">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </td>
+                `;
 
-                var typeCell = document.createElement("td");
-                typeCell.className = "px-4 sm:px-6 py-4 font-semibold";
-
-                // Pastel badge designs
-                var badgeClass = "bg-emerald-950/60 text-emerald-300 ring-1 ring-emerald-500/20";
-                if (rec.equipmentType.indexOf("Matrix") !== -1) {
-                    badgeClass = expired ? "bg-rose-950/60 text-rose-200 ring-1 ring-rose-500/30" : "bg-teal-950/60 text-teal-200 ring-1 ring-teal-500/30";
-                } else if (rec.equipmentType === "Thor") {
-                    badgeClass = expired ? "bg-rose-950/60 text-rose-200 ring-1 ring-rose-500/30" : "bg-cyan-950/60 text-cyan-200 ring-1 ring-cyan-500/30";
-                } else if (rec.equipmentType === "Blade") {
-                    badgeClass = expired ? "bg-rose-950/60 text-rose-200 ring-1 ring-rose-500/30" : "bg-amber-950/60 text-amber-200 ring-1 ring-amber-500/30";
-                } else if (rec.equipmentType === "Accesorii") {
-                    badgeClass = expired ? "bg-rose-950/60 text-rose-200 ring-1 ring-rose-500/30" : "bg-purple-950/60 text-purple-200 ring-1 ring-purple-500/30";
-                } else if (rec.equipmentType === "Cabluri") {
-                    badgeClass = expired ? "bg-rose-950/60 text-rose-200 ring-1 ring-rose-500/30" : "bg-sky-950/60 text-sky-200 ring-1 ring-sky-500/30";
-                }
-                typeCell.innerHTML = '<span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold ' + badgeClass + '">' + rec.equipmentType + '</span>';
-                row.appendChild(typeCell);
-
-                // Part Number (High readability pastel mint, text-sm)
-                var pnCell = document.createElement("td");
-                pnCell.className = "px-4 sm:px-6 py-4 font-mono text-sm tracking-tight text-emerald-200 font-medium";
-                pnCell.textContent = rec.partNumber;
-                row.appendChild(pnCell);
-
-                // Description (Unmuted text-emerald-100/80 with bold weight on expired, text-xs)
-                var descCell = document.createElement("td");
-                descCell.className = "px-4 sm:px-6 py-4 text-xs max-w-xs truncate " + (expired ? "text-rose-200 font-semibold" : "text-emerald-100/80");
-                descCell.textContent = rec.description || "-";
-                row.appendChild(descCell);
-
-                // Serial Number (Matching text-sm mono font size)
-                var snCell = document.createElement("td");
-                snCell.className = "px-4 sm:px-6 py-4 font-mono text-sm tracking-tight font-bold " + (expired ? "text-rose-100" : "text-white");
-                snCell.textContent = rec.serialNumber || "N/A";
-                row.appendChild(snCell);
-
-                // Location Badge
-                var locCell = document.createElement("td");
-                locCell.className = "px-4 sm:px-6 py-4 text-emerald-200/80 text-xs";
-                locCell.innerHTML = '<span class="inline-flex items-center space-x-1.5"><i class="fa-solid fa-location-dot ' + (expired ? "text-rose-400" : "text-emerald-400") + '"></i> <span>' + rec.location + '</span></span>';
-                row.appendChild(locCell);
-
-                // Loan Return Date column
-                var loanCell = document.createElement("td");
-                loanCell.className = "px-4 sm:px-6 py-4 font-bold text-xs";
-                if (expired) {
-                    loanCell.innerHTML = '<span class="inline-flex items-center gap-1 text-rose-400"><i class="fa-solid fa-calendar-times"></i> ' + rec.loanReturnDate + ' (EXPIRED)</span>';
-                } else if (rec.loanReturnDate && rec.loanReturnDate !== "N/A" && rec.loanReturnDate !== "NA") {
-                    loanCell.innerHTML = '<span class="inline-flex items-center gap-1 text-[#4ade80]"><i class="fa-solid fa-calendar-check"></i> ' + rec.loanReturnDate + '</span>';
-                } else {
-                    loanCell.innerHTML = '<span class="text-emerald-500/40">N/A</span>';
-                }
-                row.appendChild(loanCell);
-
-                // Action buttons inline
-                var actionCell = document.createElement("td");
-                actionCell.className = "px-4 sm:px-6 py-4 text-center whitespace-nowrap space-x-2";
-                actionCell.innerHTML =
-                    '<button onclick="startEdit(' + rec.id + ')" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-950/40 text-emerald-300 shadow-sm transition hover:bg-emerald-500/20 hover:text-white cursor-pointer" title="Edit">' +
-                    '  <i class="fa-solid fa-pen text-xs"></i>' +
-                    '</button>' +
-                    '<button onclick="deleteRecord(' + rec.id + ')" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-950/40 text-emerald-300 shadow-sm transition hover:bg-rose-900/60 hover:text-white cursor-pointer" title="Delete">' +
-                    '  <i class="fa-solid fa-trash-can text-xs"></i>' +
-                    '</button>';
-                row.appendChild(actionCell);
-
-                tbody.appendChild(row);
-            }
+                DOM.recordsTbody.appendChild(row);
+            });
 
             updateStatistics();
-        }
+        };
 
-        function updateStatistics() {
-            document.getElementById("stat-total-records").textContent = config.records.length;
+        const updateStatistics = () => {
+            DOM.statTotalRecords.textContent = Store.config.records.length;
 
-            var expiredLoansCount = 0;
-            var uniqueLocations = {};
-            for (var i = 0; i < config.records.length; i++) {
-                if (isLoanExpired(config.records[i].loanReturnDate)) {
+            let expiredLoansCount = 0;
+            const uniqueLocations = {};
+            Store.config.records.forEach(r => {
+                if (isLoanExpired(r.loanReturnDate)) {
                     expiredLoansCount++;
                 }
-                uniqueLocations[config.records[i].location] = true;
-            }
+                uniqueLocations[r.location] = true;
+            });
 
-            document.getElementById("stat-expired-loans").textContent = expiredLoansCount;
-            document.getElementById("stat-unique-locations").textContent = Object.keys(uniqueLocations).length;
+            DOM.statExpiredLoans.textContent = expiredLoansCount;
+            DOM.statUniqueLocations.textContent = Object.keys(uniqueLocations).length;
 
-            var expiredBg = document.getElementById("expired-loans-bg");
             if (expiredLoansCount > 0) {
-                expiredBg.className = "flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-rose-900/50 text-rose-300 flex-shrink-0 transition-colors";
+                DOM.expiredLoansBg.className = "flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-rose-900/50 text-rose-300 flex-shrink-0 transition-colors";
             } else {
-                expiredBg.className = "flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-emerald-950/50 text-emerald-300/60 flex-shrink-0 transition-colors";
+                DOM.expiredLoansBg.className = "flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-slate-900/60 text-slate-500 flex-shrink-0 transition-colors";
             }
-        }
+        };
 
-        // Add or Update from Form submit
-        function handleFormSubmit(event) {
+        // Form operations mapping
+        const handleFormSubmit = (event) => {
             event.preventDefault();
 
-            var editId = document.getElementById("edit-id").value;
-            var equipmentType = document.getElementById("equipment-type").value;
-            var partNumber = document.getElementById("part-number").value.trim();
-            var description = document.getElementById("description").value.trim();
-            var serialNumber = document.getElementById("serial-number").value.trim();
-            var location = document.getElementById("location").value.trim();
+            const editId = DOM.editId.value;
+            const equipmentType = DOM.equipmentType.value;
+            const partNumber = DOM.partNumber.value.trim();
+            const description = DOM.description.value.trim();
+            let serialNumber = DOM.serialNumber.value.trim();
+            const location = DOM.location.value.trim();
 
-            var loanReturnOption = document.getElementById("loan-return-option").value;
-            var loanReturnDate = "N/A";
+            const loanReturnOption = DOM.loanReturnOption.value;
+            let loanReturnDate = "N/A";
 
             if (loanReturnOption === "1W" || loanReturnOption === "2W" || loanReturnOption === "DATE") {
-                var pickerVal = document.getElementById("loan-return-date").value;
+                const pickerVal = DOM.loanReturnDate.value;
                 loanReturnDate = pickerVal ? pickerVal : "N/A";
             }
 
@@ -748,302 +787,271 @@
                 return;
             }
 
+            // Duplicate checks on serial numbers (excluding Accesorii and Cabluri)
             if (serialNumber !== "N/A" && equipmentType !== "Accesorii" && equipmentType !== "Cabluri") {
-                var duplicate = config.records.find(function(r) {
-                    return r.serialNumber.toLowerCase() === serialNumber.toLowerCase() && r.id !== parseInt(editId, 10);
-                });
+                const duplicate = Store.config.records.find(r => r.serialNumber.toLowerCase() === serialNumber.toLowerCase() && r.id !== parseInt(editId, 10));
                 if (duplicate) {
-                    var overwrite = confirm("Duplicate serial number '" + serialNumber + "' detected for existing equipment '" + duplicate.equipmentType + "'!\n\nClick OK to OVERWRITE this record, or Cancel to ignore and abort.");
+                    const overwrite = confirm(`Duplicate serial number '${serialNumber}' detected for existing equipment '${duplicate.equipmentType}'!\n\nClick OK to OVERWRITE this record, or Cancel to ignore and abort.`);
                     if (!overwrite) {
                         return;
                     }
-                    config.records = config.records.filter(function(r) {
-                        return r.id !== duplicate.id;
-                    });
+                    // Filter out overwritten duplicate record
+                    Store.config.records = Store.config.records.filter(r => r.id !== duplicate.id);
                 }
             }
 
-            if (config.locations.indexOf(location) === -1) {
-                config.locations.push(location);
-                populateLocationsDatalist();
-            }
-
-            if (!config.serialNumbers[equipmentType]) {
-                config.serialNumbers[equipmentType] = [];
-            }
-            if (serialNumber !== "N/A" && config.serialNumbers[equipmentType].indexOf(serialNumber) === -1) {
-                config.serialNumbers[equipmentType].push(serialNumber);
-            }
-
-            if (editId) {
-                var idNum = parseInt(editId, 10);
-                for (var i = 0; i < config.records.length; i++) {
-                    if (config.records[i].id === idNum) {
-                        config.records[i].equipmentType = equipmentType;
-                        config.records[i].partNumber = partNumber;
-                        config.records[i].description = description;
-                        config.records[i].serialNumber = serialNumber;
-                        config.records[i].location = location;
-                        config.records[i].loanReturnDate = loanReturnDate;
-                        break;
-                    }
-                }
-            } else {
-                var newId = config.records.length > 0 ? Math.max.apply(Math, config.records.map(function(o) { return o.id; })) + 1 : 1;
-                config.records.push({
-                    id: newId,
-                    equipmentType: equipmentType,
-                    partNumber: partNumber,
-                    description: description,
-                    serialNumber: serialNumber,
-                    location: location,
-                    loanReturnDate: loanReturnDate
-                });
-            }
+            // Apply DB changes using consolidated CRUD module
+            CRUD.addOrUpdate(editId, {
+                equipmentType,
+                partNumber,
+                description,
+                serialNumber,
+                location,
+                loanReturnDate
+            });
 
             resetForm();
             renderRecords();
-            localStorage.setItem("hosted_local_backup", JSON.stringify(config));
-        }
+        };
 
-        function startEdit(id) {
-            var target = null;
-            for (var i = 0; i < config.records.length; i++) {
-                if (config.records[i].id === id) {
-                    target = config.records[i];
-                    break;
-                }
-            }
-
+        const startEdit = (id) => {
+            const target = Store.config.records.find(r => r.id === id);
             if (!target) return;
 
-            document.getElementById("edit-id").value = target.id;
-            document.getElementById("record-idx").value = "Modify record: " + id;
-            document.getElementById("equipment-type").value = target.equipmentType;
-            document.getElementById("part-number").value = target.partNumber;
-            document.getElementById("description").value = target.description || "";
+            DOM.editId.value = target.id;
+            DOM.recordIdx.value = `Modify record: ${id}`;
+            DOM.equipmentType.value = target.equipmentType;
+            DOM.partNumber.value = target.partNumber;
+            DOM.description.value = target.description || "";
             onEquipmentTypeChange();
 
             if (target.serialNumber === "N/A" && (target.equipmentType === "Cabluri" || target.equipmentType === "Accesorii")) {
-                document.getElementById("serial-number").value = "";
+                DOM.serialNumber.value = "";
             } else {
-                document.getElementById("serial-number").value = target.serialNumber;
+                DOM.serialNumber.value = target.serialNumber;
             }
 
-            document.getElementById("location").value = target.location;
+            DOM.location.value = target.location;
 
-            var returnDateVal = target.loanReturnDate || "N/A";
-            var optionSelect = document.getElementById("loan-return-option");
-            var dateInput = document.getElementById("loan-return-date");
-
+            const returnDateVal = target.loanReturnDate || "N/A";
             if (returnDateVal !== "N/A" && returnDateVal !== "NA" && returnDateVal !== "") {
-                optionSelect.value = "DATE";
-                dateInput.classList.remove("hidden");
-                dateInput.value = returnDateVal;
+                DOM.loanReturnOption.value = "DATE";
+                DOM.loanReturnDate.classList.remove("hidden");
+                DOM.loanReturnDate.value = returnDateVal;
             } else {
-                optionSelect.value = "NA";
-                dateInput.classList.add("hidden");
-                dateInput.value = "";
+                DOM.loanReturnOption.value = "NA";
+                DOM.loanReturnDate.classList.add("hidden");
+                DOM.loanReturnDate.value = "";
             }
 
-            document.getElementById("form-title").innerHTML = '<i class="fa-solid fa-pen text-emerald-400"></i> Edit Equipment';
-            document.getElementById("submit-btn-text").textContent = "Save Changes";
-            document.getElementById("btn-submit").className = "w-full inline-flex items-center justify-center space-x-2 rounded-lg bg-emerald-500 px-4 py-3 text-sm font-semibold text-[#0c1a15] shadow-md transition hover:bg-emerald-400 focus:outline-none cursor-pointer";
-            document.getElementById("btn-cancel-edit").classList.remove("hidden");
-        }
+            DOM.formTitle.innerHTML = `<i class="fa-solid fa-pen text-sky-400"></i> Edit Equipment`;
+            DOM.submitBtnText.textContent = "Save Changes";
+            DOM.btnSubmit.className = "w-full inline-flex items-center justify-center space-x-2 rounded-xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-sky-500 focus:outline-none cursor-pointer";
+            DOM.btnCancelEdit.classList.remove("hidden");
+        };
 
-        function resetForm() {
-            document.getElementById("equipment-form").reset();
-            document.getElementById("edit-id").value = "";
-            document.getElementById("record-idx").value = "Auto-generated";
+        const resetForm = () => {
+            DOM.form.reset();
+            DOM.editId.value = "";
+            DOM.recordIdx.value = "Auto-generated";
             onEquipmentTypeChange();
 
-            document.getElementById("loan-return-option").value = "NA";
-            var dateInput = document.getElementById("loan-return-date");
-            dateInput.classList.add("hidden");
-            dateInput.value = "";
+            DOM.loanReturnOption.value = "NA";
+            DOM.loanReturnDate.classList.add("hidden");
+            DOM.loanReturnDate.value = "";
 
-            document.getElementById("form-title").innerHTML = '<i class="fa-solid fa-circle-plus text-emerald-400"></i> Add Equipment';
-            document.getElementById("submit-btn-text").textContent = "Add to List";
-            document.getElementById("btn-submit").className = "w-full inline-flex items-center justify-center space-x-2 rounded-lg bg-slate-900 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none cursor-pointer";
-            document.getElementById("btn-cancel-edit").classList.add("hidden");
-        }
+            DOM.formTitle.innerHTML = `<i class="fa-solid fa-circle-plus text-sky-400"></i> Add Equipment`;
+            DOM.submitBtnText.textContent = "Add to List";
+            DOM.btnSubmit.className = "w-full inline-flex items-center justify-center space-x-2 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none cursor-pointer";
+            DOM.btnCancelEdit.classList.add("hidden");
+        };
 
-        function deleteRecord(id) {
+        const deleteRecord = (id) => {
             if (confirm("Are you sure you want to delete this record?")) {
-                config.records = config.records.filter(function(r) {
-                    return r.id !== id;
-                });
+                CRUD.delete(id);
                 renderRecords();
-                localStorage.setItem("hosted_local_backup", JSON.stringify(config));
             }
-        }
+        };
 
-        function handleExcelImport(event) {
-            var file = event.target.files[0];
-            if (!file) return;
-
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    var data = new Uint8Array(e.target.result);
-                    var workbook = XLSX.read(data, { type: 'array' });
-
-                    var firstSheetName = workbook.SheetNames[0];
-                    var worksheet = workbook.Sheets[firstSheetName];
-                    var rawRows = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
-
-                    if (rawRows.length === 0) {
-                        alert("Excel file is empty!");
-                        return;
-                    }
-
-                    var addedCount = 0;
-                    var overwrittenCount = 0;
-                    var skippedCount = 0;
-
-                    for (var i = 0; i < rawRows.length; i++) {
-                        var row = rawRows[i];
-
-                        var partNumber = getObjectValueCaseInsensitive(row, ["Part Number", "PN", "PartNo", "Cod Part"]);
-                        var description = getObjectValueCaseInsensitive(row, ["Description", "Descriere", "Desc"]);
-                        var serialNumber = getObjectValueCaseInsensitive(row, ["Serial Number", "SN", "SerialNo", "Serie"]);
-                        var location = getObjectValueCaseInsensitive(row, ["Location", "Locatie", "Loc"]);
-                        var equipmentType = getObjectValueCaseInsensitive(row, ["Equipment Type", "Type", "Echipament", "Tip"]);
-                        var loanReturnDate = getObjectValueCaseInsensitive(row, ["Loan Return Date", "LoanReturnDate", "Loan Date", "Return Date", "Data Returnare", "Data Imprumut"]);
-
-                        partNumber = String(partNumber).trim();
-                        description = String(description).trim();
-                        serialNumber = String(serialNumber).trim();
-                        location = String(location).trim();
-                        equipmentType = String(equipmentType).trim();
-
-                        loanReturnDate = String(loanReturnDate).trim();
-                        if (loanReturnDate === "" || loanReturnDate.toLowerCase() === "n/a" || loanReturnDate.toLowerCase() === "na") {
-                            loanReturnDate = "N/A";
-                        } else {
-                            if (!isNaN(Number(loanReturnDate)) && Number(loanReturnDate) > 30000) {
-                                var dateObj = XLSX.SSF.parse_date_code(Number(loanReturnDate));
-                                if (dateObj) {
-                                    var mm = dateObj.m < 10 ? "0" + dateObj.m : dateObj.m;
-                                    var dd = dateObj.d < 10 ? "0" + dateObj.d : dateObj.d;
-                                    loanReturnDate = dateObj.y + "-" + mm + "-" + dd;
-                                }
-                            } else {
-                                var dateCheck = new Date(loanReturnDate);
-                                if (!isNaN(dateCheck.getTime())) {
-                                    var mm = (dateCheck.getMonth() + 1) < 10 ? "0" + (dateCheck.getMonth() + 1) : (dateCheck.getMonth() + 1);
-                                    var dd = dateCheck.getDate() < 10 ? "0" + dateCheck.getDate() : dateCheck.getDate();
-                                    loanReturnDate = dateCheck.getFullYear() + "-" + mm + "-" + dd;
-                                } else {
-                                    loanReturnDate = "N/A";
-                                }
-                            }
-                        }
-
-                        if (!partNumber || !location) {
-                            skippedCount++;
-                            continue;
-                        }
-
-                        if (!equipmentType) {
-                            if (serialNumber === "" || serialNumber.toLowerCase() === "n/a") {
-                                equipmentType = "Accesorii";
-                            } else {
-                                equipmentType = "Blade";
-                            }
-                        } else {
-                            var matchedType = config.equipmentTypes.find(function(t) {
-                                return t.toLowerCase() === equipmentType.toLowerCase();
-                            });
-                            if (matchedType) {
-                                equipmentType = matchedType;
-                            } else {
-                                config.equipmentTypes.push(equipmentType);
-                                config.serialNumbers[equipmentType] = [];
-                            }
-                        }
-
-                        if ((equipmentType === "Cabluri" || equipmentType === "Accesorii") && (serialNumber === "" || serialNumber.toLowerCase() === "n/a")) {
-                            serialNumber = "N/A";
-                        }
-
-                        if (!serialNumber) {
-                            serialNumber = "N/A";
-                        }
-
-                        // Duplicate serial check on equipment
-                        if (serialNumber !== "N/A" && equipmentType !== "Accesorii" && equipmentType !== "Cabluri") {
-                            var duplicate = config.records.find(function(r) {
-                                return r.serialNumber.toLowerCase() === serialNumber.toLowerCase();
-                            });
-                            if (duplicate) {
-                                var overwrite = confirm("Row #" + (i + 2) + ": Duplicate serial number '" + serialNumber + "' found for existing equipment '" + duplicate.equipmentType + "'!\n\nClick OK to OVERWRITE the existing record, or Cancel to IGNORE and skip this row.");
-                                if (overwrite) {
-                                    duplicate.equipmentType = equipmentType;
-                                    duplicate.partNumber = partNumber;
-                                    duplicate.description = description;
-                                    duplicate.location = location;
-                                    duplicate.loanReturnDate = loanReturnDate;
-                                    overwrittenCount++;
-                                    continue;
-                                } else {
-                                    skippedCount++;
-                                    continue;
-                                }
-                            }
-                        }
-
-                        config.records.push({
-                            id: newId,
-                            equipmentType: equipmentType,
-                            partNumber: partNumber,
-                            description: description,
-                            serialNumber: serialNumber,
-                            location: location,
-                            loanReturnDate: loanReturnDate
-                        });
-
-                        if (config.locations.indexOf(location) === -1) {
-                            config.locations.push(location);
-                        }
-                        if (!config.serialNumbers[equipmentType]) {
-                            config.serialNumbers[equipmentType] = [];
-                        }
-                        if (serialNumber !== "N/A" && config.serialNumbers[equipmentType].indexOf(serialNumber) === -1) {
-                            config.serialNumbers[equipmentType].push(serialNumber);
-                        }
-
-                        addedCount++;
-                    }
-
-                    populateLocationsDatalist();
-                    renderRecords();
-                    localStorage.setItem("hosted_local_backup", JSON.stringify(config));
-
-                    alert("Import completed successfully!\n\nAdded: " + addedCount + "\nOverwritten: " + overwrittenCount + "\nSkipped/Invalid: " + skippedCount);
-                } catch (err) {
-                    console.error("Excel parse error", err);
-                    alert("Error parsing Excel file! Make sure it is a valid .xls or .xlsx spreadsheet.");
-                }
-            };
-            reader.readAsArrayBuffer(file);
-            event.target.value = "";
-        }
-
-        // Case insensitive utility to lookup key matches in object properties
-        function getObjectValueCaseInsensitive(obj, potentialKeys) {
-            var keys = Object.keys(obj);
-            for (var i = 0; i < potentialKeys.length; i++) {
-                var pk = potentialKeys[i].toLowerCase();
-                for (var j = 0; j < keys.length; j++) {
+        // Case-insensitive lookup helper for spreadsheet headers
+        const getObjectValueCaseInsensitive = (obj, potentialKeys) => {
+            const keys = Object.keys(obj);
+            for (let i = 0; i < potentialKeys.length; i++) {
+                const pk = potentialKeys[i].toLowerCase();
+                for (let j = 0; j < keys.length; j++) {
                     if (keys[j].toLowerCase() === pk) {
                         return obj[keys[j]];
                     }
                 }
             }
             return "";
-        }
+        };
+
+        // Modularized Excel Import helper sub-functions (Step 5 of plan)
+        const ExcelImporter = {
+            parseDateCode: (rawValue) => {
+                let cleanedDate = "N/A";
+                const dateStr = String(rawValue).trim();
+                if (dateStr === "" || dateStr.toLowerCase() === "n/a" || dateStr.toLowerCase() === "na") {
+                    return "N/A";
+                }
+
+                if (!isNaN(Number(dateStr)) && Number(dateStr) > 30000) {
+                    const dateObj = XLSX.SSF.parse_date_code(Number(dateStr));
+                    if (dateObj) {
+                        const mm = dateObj.m < 10 ? `0${dateObj.m}` : dateObj.m;
+                        const dd = dateObj.d < 10 ? `0${dateObj.d}` : dateObj.d;
+                        cleanedDate = `${dateObj.y}-${mm}-${dd}`;
+                    }
+                } else {
+                    const dateCheck = new Date(dateStr);
+                    if (!isNaN(dateCheck.getTime())) {
+                        cleanedDate = formatDateToYYYYMMDD(dateCheck);
+                    }
+                }
+                return cleanedDate;
+            },
+
+            sanitizeRecord: (row, index) => {
+                let partNumber = getObjectValueCaseInsensitive(row, ["Part Number", "PN", "PartNo", "Cod Part"]);
+                let description = getObjectValueCaseInsensitive(row, ["Description", "Descriere", "Desc"]);
+                let serialNumber = getObjectValueCaseInsensitive(row, ["Serial Number", "SN", "SerialNo", "Serie"]);
+                let location = getObjectValueCaseInsensitive(row, ["Location", "Locatie", "Loc"]);
+                let equipmentType = getObjectValueCaseInsensitive(row, ["Equipment Type", "Type", "Echipament", "Tip"]);
+                let loanReturnDateRaw = getObjectValueCaseInsensitive(row, ["Loan Return Date", "LoanReturnDate", "Loan Date", "Return Date", "Data Returnare", "Data Imprumut"]);
+
+                partNumber = String(partNumber).trim();
+                description = String(description).trim();
+                serialNumber = String(serialNumber).trim();
+                location = String(location).trim();
+                equipmentType = String(equipmentType).trim();
+
+                if (!partNumber || !location) {
+                    return null; // Skip invalid rows
+                }
+
+                // Deducing default equipment types
+                if (!equipmentType) {
+                    equipmentType = (serialNumber === "" || serialNumber.toLowerCase() === "n/a") ? "Accesorii" : "Blade";
+                } else {
+                    const matchedType = Store.config.equipmentTypes.find(t => t.toLowerCase() === equipmentType.toLowerCase());
+                    if (matchedType) {
+                        equipmentType = matchedType;
+                    } else {
+                        Store.config.equipmentTypes.push(equipmentType);
+                        Store.config.serialNumbers[equipmentType] = [];
+                    }
+                }
+
+                if ((equipmentType === "Cabluri" || equipmentType === "Accesorii") && (serialNumber === "" || serialNumber.toLowerCase() === "n/a")) {
+                    serialNumber = "N/A";
+                }
+
+                if (!serialNumber) {
+                    serialNumber = "N/A";
+                }
+
+                const loanReturnDate = ExcelImporter.parseDateCode(loanReturnDateRaw);
+
+                return {
+                    rowIndex: index + 2,
+                    equipmentType,
+                    partNumber,
+                    description,
+                    serialNumber,
+                    location,
+                    loanReturnDate
+                };
+            },
+
+            processRow: (record) => {
+                const { equipmentType, partNumber, description, serialNumber, location, loanReturnDate, rowIndex } = record;
+
+                // Handle serial duplicates (excluding Cabluri & Accesorii)
+                if (serialNumber !== "N/A" && equipmentType !== "Accesorii" && equipmentType !== "Cabluri") {
+                    const duplicate = Store.config.records.find(r => r.serialNumber.toLowerCase() === serialNumber.toLowerCase());
+                    if (duplicate) {
+                        const overwrite = confirm(`Row #${rowIndex}: Duplicate serial number '${serialNumber}' found for existing equipment '${duplicate.equipmentType}'!\n\nClick OK to OVERWRITE the existing record, or Cancel to IGNORE and skip this row.`);
+                        if (overwrite) {
+                            duplicate.equipmentType = equipmentType;
+                            duplicate.partNumber = partNumber;
+                            duplicate.description = description;
+                            duplicate.location = location;
+                            duplicate.loanReturnDate = loanReturnDate;
+                            return "overwritten";
+                        } else {
+                            return "skipped";
+                        }
+                    }
+                }
+
+                // Call CRUD insert
+                CRUD.addOrUpdate(null, {
+                    equipmentType,
+                    partNumber,
+                    description,
+                    serialNumber,
+                    location,
+                    loanReturnDate
+                });
+
+                return "added";
+            }
+        };
+
+        const handleExcelImport = (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const rawRows = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+
+                    if (rawRows.length === 0) {
+                        alert("Excel file is empty!");
+                        return;
+                    }
+
+                    let addedCount = 0;
+                    let overwrittenCount = 0;
+                    let skippedCount = 0;
+
+                    rawRows.forEach((row, i) => {
+                        const sanitized = ExcelImporter.sanitizeRecord(row, i);
+                        if (!sanitized) {
+                            skippedCount++;
+                            return;
+                        }
+
+                        const status = ExcelImporter.processRow(sanitized);
+                        if (status === "added") {
+                            addedCount++;
+                        } else if (status === "overwritten") {
+                            overwrittenCount++;
+                        } else {
+                            skippedCount++;
+                        }
+                    });
+
+                    populateLocationsDatalist();
+                    renderRecords();
+                    Store.saveLocalBackup();
+
+                    alert(`Import completed successfully!\n\nAdded: ${addedCount}\nOverwritten: ${overwrittenCount}\nSkipped/Invalid: ${skippedCount}`);
+                } catch (err) {
+                    console.error("Excel parse error", err);
+                    alert("Error parsing Excel file! Make sure it is a valid spreadsheet.");
+                }
+            };
+            reader.readAsArrayBuffer(file);
+            event.target.value = "";
+        };
     </script>
 </body>
 </html>
